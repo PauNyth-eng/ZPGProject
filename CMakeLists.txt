@@ -24,6 +24,7 @@ add_executable(ZPGProject
         source/TransTranslate.cpp
         include/Mouse.h
         source/Mouse.cpp
+        main.cpp
 )
 
 file(COPY resources DESTINATION .)
