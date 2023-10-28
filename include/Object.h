@@ -17,7 +17,6 @@
 #include "Model.h"
 #include "Enums.h"
 #include "Shader.h"
-
 class Object
 {
 private:
@@ -25,7 +24,7 @@ private:
 
 
 
-    glm::mat4 transformation() const;
+    [[nodiscard]] glm::mat4 transformation() const;
     std::reference_wrapper<Shader> shader;
     std::shared_ptr<Model> model;
     unsigned int id;
@@ -43,13 +42,15 @@ public:
     void draw() const;
     void update(double dt);
     void AddTransformation(TransComponent* component);
-    unsigned int objectId() const;
+    [[nodiscard]] unsigned int objectId() const;
 
     std::shared_ptr<TransComposite> composite;
 
+
+
     void setColor(glm::vec3 color);
     void setColor(float r, float g, float b);
-
+    void setScale(glm::vec3 scales);
     static const glm::vec3 defaultColor;
     static const glm::vec3 secondaryColor;
 
@@ -64,7 +65,6 @@ public:
         glm::vec3 position{ 0.f };
         glm::vec3 scales{ 1.f };
         glm::vec3 color = defaultColor;
-
         void reset();
         Object createObject();
 
@@ -79,7 +79,6 @@ public:
         Builder& setScale(float x, float y, float z);
         Builder& setColor(glm::vec3 color);
         Builder& setColor(float r, float g, float b);
-
         Object build();
 
     };

@@ -28,6 +28,7 @@ void Scene::Update(double timeDelta)
     camera.update(timeDelta);
     for (auto& obj : objects)
     {
+        obj.update(timeDelta);
         obj.draw();
     }
 }

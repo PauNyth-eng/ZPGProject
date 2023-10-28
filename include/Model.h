@@ -42,7 +42,7 @@ struct Texture
 class Mesh {
 public:
     // mesh data
-    void Draw(Shader& shader);
+    void Draw(unsigned  int id, Shader& shader);
 
 
     Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, std::shared_ptr<Texture> texture, const Material& material);
@@ -62,7 +62,7 @@ class Model {
 public:
 
     void draw(uint32_t id, Shader& shader) const;
-    void applyTexture(const std::shared_ptr<Texture>& texture);
+    //void applyTexture(const std::shared_ptr<Texture>& texture);
     void AddObj(Mesh&& mesh);
     std::vector<Mesh> meshes;
     std::vector<Material> materials;

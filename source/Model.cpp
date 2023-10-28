@@ -7,8 +7,9 @@
 
 std::unordered_map<std::string, std::shared_ptr<Model>> ModelLoader::models;
 
-void Mesh::Draw(Shader& shader)
+void Mesh::Draw(unsigned int id, Shader& shader)
 {
+    glStencilFunc(GL_ALWAYS, id, 0xFF);
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
@@ -20,7 +21,7 @@ void Mesh::Draw(Shader& shader)
 void Model::draw(uint32_t id, Shader& shader) const
 {
     for (auto mesh : meshes) {
-        mesh.Draw(shader);
+        mesh.Draw(id, shader);
     }
 }
 

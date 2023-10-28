@@ -19,6 +19,6 @@ void main ()
 {
     ex_worldPosition = modelMatrix * vec4(positionVec, 1.0);
     ex_worldNormal =  normalize(transpose(inverse(mat3(modelMatrix))) * normalVec);
-    color = vec3 (0.385 ,0.647 ,0.812 );
+    color = vec3 (1 ,1 ,1 );
     gl_Position = (projectionMatrix * viewMatrix * modelMatrix) * vec4 (positionVec, 1.0);
 }

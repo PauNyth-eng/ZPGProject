@@ -43,7 +43,7 @@ private:
     void deselect();
     void selectObject(int mouseX, int mouseY);
 
-    void emplaceObject(int mouseX, int mouseY);
+    void deselectObject(int mouseX, int mouseY);
     void onButtonPress(const MouseData & mouseData);
     bool hasSelected();
     Object& getSelected();

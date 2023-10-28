@@ -74,6 +74,14 @@ void Engine::keyCallback(GLFWwindow *window, int key, int scancode, int action, 
         case GLFW_KEY_RIGHT:
             scene().camera.rotateHor((action == GLFW_RELEASE) ? Direction::none : Direction::right);
             break;
+        case GLFW_KEY_U:
+            if (hasSelected())
+                getSelected().setScale(glm::vec3(1.1f));
+            break;
+        case GLFW_KEY_J:
+            if (hasSelected())
+                getSelected().setScale(glm::vec3(0.9f));
+            break;
         default:
             break;
     }
@@ -84,6 +92,7 @@ Engine& Engine::instance()
     if (not engine)
     {
         engine = new Engine();
+
     }
 
     return *engine;
@@ -148,6 +157,7 @@ Engine::Engine()
     initApplication();
     initScene();
     engine = this;
+    Mouse::instance().registerObserver(*engine);
 }
 
 
@@ -187,19 +197,39 @@ Scene& Engine::scene()
 
 void Engine::deselect()
 {
+    if (hasSelected()) {
+        getSelected().setColor(Object::defaultColor);
+        selected = noneSelected;
+    }
 }
 
 void Engine::selectObject(int mouseX, int mouseY)
 {
+    GLuint objectId;
+
+    const GLint x = mouseX;
+    const GLint y = bufferHeight - mouseY;
+
+    glReadPixels(x, y, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &objectId);
+
+    std::cout << "Selected object: " << objectId << std::endl;
+
+    deselect();
+    if (objectId) {
+
+        selected = scene().indexOf(objectId);
+        // getSelected().setColor(Object::secondaryColor);
+    }
 }
 
-void Engine::emplaceObject(int mouseX, int mouseY)
+void Engine::deselectObject(int mouseX, int mouseY)
 {
+    deselect();
 }
 
 bool Engine::hasSelected()
 {
-    return false;
+    return selected != noneSelected and selected < scene().objects.size();
 }
 
 Object& Engine::getSelected()
@@ -267,6 +297,10 @@ void Engine::initGL()
     initWindow();
     initGLFWContext();
     initGLEW();
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_STENCIL_TEST);
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
     printInfo();
 }
 
@@ -305,16 +339,24 @@ void Engine::initScene()
 //            .build();
 
     scenePtr = sceneBuilder
-            .emplaceLight(glm::vec3 { 1.f }, glm::vec3 { 0.f, 0.f, 0.f }, LightType::Point)
-            .emplaceLight(glm::vec3 { 1.f }, glm::vec3 { 0.f, 0.f, 0.f }, LightType::Point)
-            .emplaceLight(glm::vec3 { 1.f }, glm::vec3 { 6.f, 0.f, 0.f }, LightType::Point)
+            .emplaceLight(glm::vec3 { 1, 1, 0 }, glm::vec3 { 0.f, 0.f, 0.f }, LightType::Point)
             .emplaceAmbientLight(glm::vec3 { .1f })
             .addObject(
                     objBuilder
-                            .emplaceObject(ModelLoader::get("sphere"), ShaderManager::phong()).setScale(.5f, .5f, .5f).setPosition(3.f, 0.f, 0.f).build()
+                            .emplaceObject(ModelLoader::get("sphere"), ShaderManager::phong())
+                            .setScale(.5f, .5f, .5f)
+                            .setPosition(3.f, 0.f, 0.f)
+                            .build()
                     )
-                    .setCameraPosition(6.f, 0.f, 0.f)
-                    .build();
+            .addObject(
+                    objBuilder
+                            .emplaceObject(ModelLoader::get("monkey"), ShaderManager::phong())
+                            .setScale(.5f, .5f, .5f)
+                            .setPosition(-3.f, 0.f, 0.f)
+                            .build()
+            )
+            .setCameraPosition(0.f, 0.f, 0.f)
+            .build();
 
 //        scenePtr = sceneBuilder
 //            .addObject(
@@ -361,11 +403,11 @@ void Engine::update(float dt)
 }
 
 void Engine::onButtonPress(const MouseData & mouseData) {
-//    if (mouseData.lbPressed()) {
-//        selectObject(mouseData.x, mouseData.y);
-//    } else if (mouseData.rbPressed()) {
-//        emplaceObject(mouseData.x, mouseData.y);
-//    }
+    if (mouseData.lbPressed()) {
+        selectObject(mouseData.x, mouseData.y);
+    } else if (mouseData.rbPressed()) {
+        deselectObject(mouseData.x, mouseData.y);
+    }
 }
 
 void Engine::notify(EventType eventType, void* object)

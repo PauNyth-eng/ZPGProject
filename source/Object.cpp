@@ -46,13 +46,21 @@ void Object::draw() const {
     model->draw(id, shader.get());
 }
 
+
+
 void Object::update(double dt)
 {
+
 }
 
 void Object::AddTransformation(TransComponent* component)
 {
     this->composite->AddTransformation(component);
+}
+
+void Object::setScale(glm::vec3 scales) {
+    composite->AddTransformation(new TransScale(scales));
+
 }
 
 void Object::Builder::reset()
@@ -144,3 +152,4 @@ Object Object::Builder::build()
 
     return obj;
 }
+
