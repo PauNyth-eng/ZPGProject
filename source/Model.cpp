@@ -222,7 +222,7 @@ void ModelLoader::processNode(aiNode& node, const aiScene& scene, std::shared_pt
 
 std::shared_ptr<Model> ModelLoader::loadModel(const std::string& key) {
     auto path = formatName(key);
-
+    printf("Loading model '%s'\n", path.c_str());
     Assimp::Importer importer;
     const aiScene* aiscene = importer.ReadFile(path, importOpts);
 
