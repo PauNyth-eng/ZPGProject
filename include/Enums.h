@@ -7,7 +7,15 @@ enum class EventType {
     MouseButtonPressed,
     MouseButtonReleased,
     MouseMoved,
-    CameraMoved
+    CameraMoved,
+    LightChanged
+};
+enum class LightType
+{
+    Directional = 0,
+    Point,
+    Spot,
+    Ambient
 };
 
 enum class Growth {

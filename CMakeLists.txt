@@ -25,6 +25,8 @@ add_executable(ZPGProject
         include/Mouse.h
         source/Mouse.cpp
         main.cpp
+        include/Light.h
+        source/Light.cpp
 )
 
 file(COPY resources DESTINATION .)
