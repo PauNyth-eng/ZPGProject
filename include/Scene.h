@@ -13,7 +13,7 @@ class Scene
 {
 private:
     Scene(std::vector<Object> objects, AmbientLight ambientLight,
-          std::vector<std::shared_ptr<Light>> light, glm::vec3 cameraPos);
+          std::vector<std::shared_ptr<Light>> lights, glm::vec3 cameraPos);
     void applyLights() const;
     std::vector<std::shared_ptr<Light>> lights;
 public:

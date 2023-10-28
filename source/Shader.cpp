@@ -139,9 +139,9 @@ GLint Shader::getUniformLocation(const std::string& var) const
 GLint Shader::getUniformLocation(const char* var) const
 {
     auto location = glGetUniformLocation(shaderId, var);
-//    if (location < 0) {
-//        std::cout << "Uniform variable '" << var << "' not found." << std::endl;
-//    }
+    if (location < 0) {
+        std::cout << "Uniform variable '" << var << "' not found." << std::endl;
+    }
     return location;
 }
 
@@ -164,23 +164,82 @@ GLuint Shader::compileShader(const std::string& shader, ShaderType type)
     glShaderSource(id, 1, &shaderPtr, nullptr);
     glCompileShader(id);
     GLint success;
-//    glGetShaderiv(id, GL_COMPILE_STATUS, &success);
-//    if(!success)
-//    {
-//        GLchar  infoLog[512];
-//        glGetShaderInfoLog(id, 512, nullptr, infoLog);
-//        std::cerr << "ERROR::SHADER::" << (type == GL_VERTEX_SHADER ? "VERTEX" : "FRAGMENT") << "::COMPILATION_FAILED\n" << infoLog << std::endl;
-//    }
+    glGetShaderiv(id, GL_COMPILE_STATUS, &success);
+    if(!success)
+    {
+        GLchar  infoLog[512];
+        glGetShaderInfoLog(id, 512, nullptr, infoLog);
+        std::cerr << "ERROR::SHADER::" << (type == GL_VERTEX_SHADER ? "VERTEX" : "FRAGMENT") << "::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
     return id;
 }
 
 void Shader::notify(EventType eventType, void* object)
 {
-    if (eventType == EventType::CameraMoved)
+
+    if ( eventType == EventType::LightChanged)
+    {
+        Light & light = *(Light*)object;
+
+        applyLight(light);
+
+        if (light.type() == LightType::Spot) {
+            applyLight((SpotLight&)light);
+        } else if (light.type() == LightType::Directional) {
+            applyLight((DirectionalLight&)light);
+        } else if (light.type() == LightType::Point) {
+            applyLight((PositionedLight&)light);
+        }
+    }else if (eventType == EventType::CameraMoved)
     {
         Camera& camera = *((Camera*)object);
         updateView(camera.view());
         updatePosition(camera.position());
         updateProjection(camera.projection());
     }
+}
+
+void Shader::colorChanged(glm::vec3 color, size_t lightIndex, LightType lightType) const {
+    if (lightType == LightType::Ambient) {
+        passUniformLocation("ambientColor", color);
+    } else if (lightType == LightType::Point or lightType == LightType::Directional) {
+        passUniformLocation("lights[" + std::to_string(lightIndex) + "].lightColor", color);
+    }
+}
+
+void Shader::positionChanged(glm::vec3 position, size_t lightIndex, LightType lightType) {
+    if (lightType == LightType::Ambient) {
+        return;
+    } else if (lightType == LightType::Point) {
+        passUniformLocation("lights[" + std::to_string(lightIndex) + "].position", position);
+    } else if (lightType == LightType::Directional) {
+        passUniformLocation("lights[" + std::to_string(lightIndex) + "].direction", position);
+    } else if (lightType == LightType::Spot) {
+
+        passUniformLocation("lights[" + std::to_string(lightIndex) + "].direction", position);
+        passUniformLocation("lights[" + std::to_string(lightIndex) + "].position", position);
+    }
+}
+
+void Shader::typeChanged(LightType type, size_t lightIndex) {
+    passUniformLocation("lights[" + std::to_string(lightIndex) + "].lightType", int32_t(type));
+}
+
+void Shader::applyLight(Light &light) {
+    colorChanged(light.GetColor(), light.index, light.type());
+    typeChanged(light.type(), light.index);
+}
+
+void Shader::applyLight(PositionedLight & light) {
+    passUniformLocation("lights[" + std::to_string(light.index) + "].position", light.GetPosition());
+}
+
+void Shader::applyLight(DirectionalLight & light) {
+    passUniformLocation("lights[" + std::to_string(light.index) + "].direction", light.GetDirection());
+}
+
+void Shader::applyLight(SpotLight & light) {
+    passUniformLocation("lights[" + std::to_string(light.index) + "].position", light.GetPosition());
+    passUniformLocation("lights[" + std::to_string(light.index) + "].direction", light.GetPosition());
+    passUniformLocation("lights[" + std::to_string(light.index) + "].cutoff", glm::cos(glm::radians(light.GetCutOff())));
 }

@@ -37,6 +37,8 @@ struct Texture
     std::string type;
     std::string path;
 };
+
+
 class Mesh {
 public:
     // mesh data

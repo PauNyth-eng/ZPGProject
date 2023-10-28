@@ -13,6 +13,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Observer.h"
 #include "Camera.h"
+#include "Light.h"
 class Shader : public Observer{
 public:
     Shader(const char* vertexPath, const char* fragmentPath);
@@ -43,6 +44,15 @@ private:
     void compile(const std::string& vertexPath, const std::string& fragmentPath);
     static std::string loadShader(const std::string& filename);
     static GLuint compileShader(const std::string& shader, ShaderType type);
+
+    void colorChanged(glm::vec3 color, size_t lightIndex, LightType lightType) const;
+    void positionChanged(glm::vec3 position, size_t lightIndex, LightType lightType);
+    void typeChanged(LightType type, size_t lightIndex);
+
+    void applyLight(Light & light);
+    void applyLight(PositionedLight & light);
+    void applyLight(DirectionalLight & light);
+    void applyLight(SpotLight & light);
 
 };
 

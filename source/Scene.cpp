@@ -18,7 +18,8 @@ void Scene::setShaderCount() const
 }
 
 void Scene::Init()
-{
+{   ambient.apply();
+    applyLights();
     camera.apply();
 }
 
@@ -64,7 +65,7 @@ size_t Scene::indexOf(unsigned int objectId)
     return std::numeric_limits<size_t>::max();
 }
 
-Scene::Scene(std::vector<Object> objects, AmbientLight ambientLight, std::vector<std::shared_ptr<Light>> light,
+Scene::Scene(std::vector<Object> objects, AmbientLight ambientLight, std::vector<std::shared_ptr<Light>> lights,
              glm::vec3 cameraPos) : objects(std::move(objects)), ambient(std::move(ambientLight)), lights(std::move(lights)){
     Init();
     camera.setPosition(cameraPos);
@@ -176,6 +177,8 @@ void Scene::Builder::reset()
 {
     objects = { };
     cameraPos = { 0.f, 0.f, 0.f };
+    lights = { };
+    emplaceAmbientLight({ 0.1f, 0.1f, 0.1f });
 }
 
 

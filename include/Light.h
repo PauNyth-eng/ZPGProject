@@ -74,7 +74,6 @@ public:
 class SpotLight : public PositionedLight {
     mutable glm::vec3 direction{0.f};
     mutable float cutOff = 0.f;
-    mutable float outerCutOff = 0.f;
 public:
     SpotLight() = default;
     SpotLight(glm::vec3 color, glm::vec3 position, glm::vec3 direction, float cutOff);
