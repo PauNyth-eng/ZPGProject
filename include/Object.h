@@ -14,7 +14,7 @@
 #include "TransRotate.h"
 #include "TransTranslate.h"
 #include "TransScale.h"
-#include "model.h"
+#include "Model.h"
 #include "Enums.h"
 #include "Shader.h"
 

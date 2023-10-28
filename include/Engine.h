@@ -15,10 +15,10 @@
 #include <GLFW/glfw3.h>
 
 #include "Observer.h"
-#include "shader.h"
-#include "object.h"
+#include "Shader.h"
+#include "Object.h"
 #include "Camera.h"
-#include "scene.h"
+#include "Scene.h"
 #include "ShaderManager.h"
 class Engine :
         public Observer

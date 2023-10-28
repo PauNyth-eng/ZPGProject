@@ -1,7 +1,7 @@
 //
 // Created by Pavel Janu(Skola) on 10/20/2023.
 //
-#include "object.h"
+#include "Object.h"
 #include "Scene.h"
 
 

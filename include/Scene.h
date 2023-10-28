@@ -5,7 +5,7 @@
 #pragma once
 
 #include <vector>
-#include "camera.h"
+#include "Camera.h"
 #include "Object.h"
 #include "ShaderManager.h"
 class Scene

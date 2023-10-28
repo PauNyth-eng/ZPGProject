@@ -304,36 +304,36 @@ void Engine::initScene()
 //            .setCameraPosition(glm::vec3(0.f, 0.f, 0.f))
 //            .build();
 
-//    scenePtr = sceneBuilder
+    scenePtr = sceneBuilder
+            .addObject(
+                    objBuilder
+                            .emplaceObject(ModelLoader::get("sphere"), ShaderManager::phong()).setScale(.5f, .5f, .5f).setPosition(3.f, 0.f, 0.f).build()
+                    )
+                    .setCameraPosition(6.f, 0.f, 0.f)
+                    .build();
+
+//        scenePtr = sceneBuilder
 //            .addObject(
 //                    objBuilder
-//                            .emplaceObject(ModelLoader::get("sphere"), ShaderManager::phong()).setScale(.5f, .5f, .5f).setPosition(3.f, 0.f, 0.f).build()
-//                    )
-//                    .setCameraPosition(6.f, 0.f, 0.f)
-//                    .build();
-
-        scenePtr = sceneBuilder
-            .addObject(
-                    objBuilder
-                            .emplaceObject(ModelLoader::get("sphere"), ShaderManager::constant()).setScale(.5f, .5f, .5f).setPosition(3.f, 0.f, 0.f).build()
-
-            )
-            .addObject(
-                    objBuilder
-                            .emplaceObject(ModelLoader::get("monkey"), ShaderManager::lambert()).setScale(.5f, .5f, .5f).setPosition(-3.f, 0.f, 0.f).build()
-
-            )
-            .addObject(
-                    objBuilder
-                            .emplaceObject(ModelLoader::get("tree"), ShaderManager::phong()).setScale(.5f, .5f, .5f).setPosition(0.f, 0.f, 3.f).build()
-
-            ).addObject(
-                    objBuilder
-                            .emplaceObject(ModelLoader::get("Asuna"), ShaderManager::blinn()).setScale(.03f, .03f, .03f).setPosition(0.f, 0.f, -3.f).build()
-
-            )
-            .setCameraPosition(glm::vec3(0.f, 0.f, 0.f))
-            .build();
+//                            .emplaceObject(ModelLoader::get("sphere"), ShaderManager::constant()).setScale(.5f, .5f, .5f).setPosition(3.f, 0.f, 0.f).build()
+//
+//            )
+//            .addObject(
+//                    objBuilder
+//                            .emplaceObject(ModelLoader::get("monkey"), ShaderManager::lambert()).setScale(.5f, .5f, .5f).setPosition(-3.f, 0.f, 0.f).build()
+//
+//            )
+//            .addObject(
+//                    objBuilder
+//                            .emplaceObject(ModelLoader::get("tree"), ShaderManager::phong()).setScale(.5f, .5f, .5f).setPosition(0.f, 0.f, 3.f).build()
+//
+//            ).addObject(
+//                    objBuilder
+//                            .emplaceObject(ModelLoader::get("Asuna"), ShaderManager::blinn()).setScale(.03f, .03f, .03f).setPosition(0.f, 0.f, -3.f).build()
+//
+//            )
+//            .setCameraPosition(glm::vec3(0.f, 0.f, 0.f))
+//            .build();
 }
 
 void Engine::updatePlayer(float dt)
