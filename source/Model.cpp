@@ -247,5 +247,5 @@ std::shared_ptr<Model> ModelLoader::loadModel(const std::string& key) {
 }
 
 std::string ModelLoader::formatName(const std::string& model) {
-    return "../resources/Models/" + model + ".obj";
+    return "resources/Models/" + model + ".obj";
 }
