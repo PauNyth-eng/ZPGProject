@@ -139,9 +139,9 @@ GLint Shader::getUniformLocation(const std::string& var) const
 GLint Shader::getUniformLocation(const char* var) const
 {
     auto location = glGetUniformLocation(shaderId, var);
-    if (location < 0) {
-        std::cout << "Uniform variable '" << var << "' not found." << std::endl;
-    }
+//    if (location < 0) {
+//        std::cout << "Uniform variable '" << var << "' not found." << std::endl;
+//    }
     return location;
 }
 
