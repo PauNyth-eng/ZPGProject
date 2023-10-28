@@ -305,6 +305,9 @@ void Engine::initScene()
 //            .build();
 
     scenePtr = sceneBuilder
+            .emplaceLight(glm::vec3 { 1.f }, glm::vec3 { 0.f, 1.f, 0.f }, LightType::Point)
+            .emplaceLight(glm::vec3 { 8.f }, glm::vec3 { -3.f, -8.f, 0.f }, LightType::Directional)
+            .emplaceAmbientLight(glm::vec3 { .1f })
             .addObject(
                     objBuilder
                             .emplaceObject(ModelLoader::get("sphere"), ShaderManager::phong()).setScale(.5f, .5f, .5f).setPosition(3.f, 0.f, 0.f).build()

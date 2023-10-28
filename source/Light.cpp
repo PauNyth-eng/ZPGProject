@@ -95,7 +95,7 @@ void PositionedLight::move(const glm::vec3 offset) const
     SetPosition(position + offset);
 }
 
-SpotLight::SpotLight(glm::vec3 color, glm::vec3 position, glm::vec3 direction, float cutOff, float outerCutOff) : PositionedLight(color, position), direction(direction), cutOff(cutOff), outerCutOff(outerCutOff)
+SpotLight::SpotLight(glm::vec3 color, glm::vec3 position, glm::vec3 direction, float cutOff) : PositionedLight(color, position), direction(direction), cutOff(cutOff)
 {
 
 }
@@ -125,16 +125,5 @@ void SpotLight::SetCutOff(float cutOff)
 float SpotLight::GetCutOff() const
 {
     return cutOff;
-}
-
-void SpotLight::SetOuterCutOff(float outerCutOff)
-{
-    this->outerCutOff = outerCutOff;
-    apply();
-}
-
-float SpotLight::GetOuterCutOff() const
-{
-    return outerCutOff;
 }
 

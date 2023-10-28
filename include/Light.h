@@ -21,7 +21,6 @@ protected:
 
 public:
     Light() = default;
-    virtual ~Light() = default;
     explicit Light(glm::vec3 color);
 
     float boundColor(float color) const;
@@ -36,6 +35,8 @@ public:
 
     virtual void apply() const;
 };
+
+typedef Light AmbientLight;
 
 
 class DirectionalLight : public Light
@@ -76,7 +77,7 @@ class SpotLight : public PositionedLight {
     mutable float outerCutOff = 0.f;
 public:
     SpotLight() = default;
-    SpotLight(glm::vec3 color, glm::vec3 position, glm::vec3 direction, float cutOff, float outerCutOff);
+    SpotLight(glm::vec3 color, glm::vec3 position, glm::vec3 direction, float cutOff);
 
     LightType type() const override;
 
@@ -86,8 +87,6 @@ public:
     void SetCutOff(float cutOff);
     float GetCutOff() const;
 
-    void SetOuterCutOff(float outerCutOff);
-    float GetOuterCutOff() const;
 
 };
 
