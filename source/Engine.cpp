@@ -315,42 +315,36 @@ void Engine::initScene()
     Object::Builder objBuilder;
     Scene::Builder sceneBuilder;
 
-    scenePtr = sceneBuilder
+    sceneBuilder
             .emplaceLight(glm::vec3{1, 1, 1}, glm::vec3{0.f, 0.f, 0.f}, LightType::Point)
+            .emplaceLight(glm::vec3{1, 1, 1}, glm::vec3{50.f, 0.f, 50.f}, LightType::Point)
+            .emplaceLight(glm::vec3{1, 1, 1}, glm::vec3{10.f, 0.f, 10.f}, LightType::Point)
+            .emplaceLight(glm::vec3{1, 1, 1}, glm::vec3{0.f, 0.f, 20.f}, LightType::Point)
             .emplaceAmbientLight(glm::vec3{0.1f})
             .addObject(
                     objBuilder
-                            .emplaceObject(ModelLoader::get("sphere"), ShaderManager::constant())
-                            .setPosition(0.f, 0.f, 0.f)
-                            .setScale(glm::vec3{0.05})
-                            .build()
-            )
-            .addObject(
-                    objBuilder
                             .emplaceObject(ModelLoader::get("sphere"), ShaderManager::phong())
-                            .setPosition(5.f, 0.f, 0.f)
+                            .setPosition(20.f, 0.f, 20.f)
+                            .setScale(glm::vec3 {0.5f})
                             .build()
             )
-            .addObject(
-                    objBuilder
-                            .emplaceObject(ModelLoader::get("sphere"), ShaderManager::phong())
-                            .setPosition(-5.f, 0.f, 0.f)
-                            .build()
-            )
-            .addObject(
-                    objBuilder
-                            .emplaceObject(ModelLoader::get("sphere"), ShaderManager::phong())
-                            .setPosition(0.f, 0.f, 5.f)
-                            .build()
-            )
-            .addObject(
-                    objBuilder
-                            .emplaceObject(ModelLoader::get("sphere"), ShaderManager::phong())
-                            .setPosition(0.f, 0.f, -5.f)
-                            .build()
-            )
-            .setCameraPosition(0.f, 0.f, 0.f)
-            .build();
+            .setCameraPosition(0.f, 0.f, 0.f);
+
+    for (int i = 0; i < 400; i++) {
+        float randX = static_cast<float>(rand() % 100 - 10); // Adjust the range as needed
+        float randZ = static_cast<float>(rand() % 100 - 10); // Adjust the range as needed
+        float randScale = static_cast<float>(rand() % 5) / 10.0f + 0.5f; // Adjust the scale range
+
+        sceneBuilder.addObject(
+                objBuilder
+                        .emplaceObject(ModelLoader::get("tree"), ShaderManager::phong()) // Assuming "tree" is the model name
+                        .setPosition(randX, 0.f, randZ)
+                        .setScale(glm::vec3{randScale})
+                        .build()
+        );
+    }
+
+    scenePtr = sceneBuilder.build();
 }
 
 void Engine::updatePlayer(float dt)

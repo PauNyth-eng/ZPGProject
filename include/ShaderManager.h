@@ -9,6 +9,7 @@ class ShaderManager
     Shader _constant;
     Shader _lambert;
     Shader _phong;
+    Shader _phong2;
     Shader _blinn;
 
 
@@ -21,6 +22,7 @@ public:
     static Shader& constant();
     static Shader& lambert();
     static Shader& phong();
+    static Shader& phong2();
     static Shader& blinn();
 };
 

@@ -85,7 +85,7 @@ Material ModelLoader::loadMaterial(aiMaterial& mat, Material& material) {
     aiColor3D color{ 0.f, 0.f, 0.f };
 
     mat.Get(AI_MATKEY_COLOR_DIFFUSE, color);
-    material.diffuse = toVector(color);
+            material.diffuse = toVector(color);
 
     mat.Get(AI_MATKEY_COLOR_AMBIENT, color);
     material.ambient = toVector(color);

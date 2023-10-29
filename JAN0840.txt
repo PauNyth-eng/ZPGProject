@@ -81,19 +81,19 @@ Testovací scény
 2) Test na rotaci a jeji skládání.
 ----------------------
   splněno / nesplněno
-  Popis:
+  Popis: Tuhle scénu jsem nedokázal napodobit, protože moje animace rotace nefungují dobře pro tuhle scénu.
 
 3) Test na ořezání světla, které nemůže dopadnou na plochu.
 ----------------------
   splněno / nesplněno
-  Popis:
+  Popis: Na obrazku b vidíme ze není ořízle, protože se nekontroluje jestli jsme za objektem. U obrázku A je podmínka takže světlo je oříznuté.
 
 4) Test na změnu velikosti obrazovky.
 ----------------------
   splněno / nesplněno
-  Popis:
+  Popis: Podle obrázku jde vidět že ViewPort se změní, ale perspektiva je spatná, věc kterou budu dodělávat.
 
 5) Testování na více objektů a použití více shaderu ve scéně (procházení lesa).
 ----------------------
   splněno / nesplněno
-  Popis:
+  Popis: Jak jde vidět Obrázky A a B oba obsahují více světel, zatím to obsahuje jen jeden shader, Phong, protože jsem nestihl ještě implementovat více světel v ostatníchj shaderu.
