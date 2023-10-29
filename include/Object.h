@@ -31,9 +31,18 @@ private:
 
 
     static unsigned int objectCount;
-
     static unsigned int getNextId();
 
+
+    Scale scaleDr = Scale::none;
+    Rotation rotateDr = Rotation::left;
+    glm::vec2 movementDir { 0.f, 0.f };
+    glm::vec2 forces { 0.f, 0.f };
+    glm::vec3 rotationRadians{ 0.f };
+    glm::vec3 rotationCenter{ 0.f };
+    glm::vec3 direction{ 0.f };
+    glm::vec3 position{ 0.f };
+    float radius = 0.0f;
 
 
 public:
@@ -46,11 +55,23 @@ public:
 
     std::shared_ptr<TransComposite> composite;
 
+    void updateScale(float d);
+    void updateRotate(float d);
+    void updateMove(float d);
+
+    void setScaleDr(Scale scaleDr);
+    void setRotateDr(Rotation rotateDr);
+
+
+    void setRotate(glm::vec3 radians, glm::vec3 direction, glm::vec3 rotationCenter, float radius = 0.0f);
+    void setScale(glm::vec3 scales);
+    void setMove(glm::vec3 position);
+
 
 
     void setColor(glm::vec3 color);
     void setColor(float r, float g, float b);
-    void setScale(glm::vec3 scales);
+
     static const glm::vec3 defaultColor;
     static const glm::vec3 secondaryColor;
 
@@ -62,8 +83,11 @@ public:
 
 
         glm::vec3 rotationRadians{ 0.f };
+        glm::vec3 rotationCenter{ 0.f };
+        glm::vec3 direction{ 0.f };
         glm::vec3 position{ 0.f };
         glm::vec3 scales{ 1.f };
+        float radius = 0.0f;
         glm::vec3 color = defaultColor;
         void reset();
         Object createObject();
@@ -72,7 +96,7 @@ public:
         Builder& setModel(std::shared_ptr<Model> model);
         Builder& setShader(Shader& shader);
         Builder& emplaceObject(std::shared_ptr<Model> model, Shader& shader);
-        Builder& setRotation(glm::vec3 radians);
+        Builder& setRotation(glm::vec3 radians, glm::vec3 direction, glm::vec3 rotationCenter, float radius = 0.0f);
         Builder& setPosition(glm::vec3 position);
         Builder& setPosition(float x, float y, float z);
         Builder& setScale(glm::vec3 scales);
@@ -80,7 +104,6 @@ public:
         Builder& setColor(glm::vec3 color);
         Builder& setColor(float r, float g, float b);
         Object build();
-
     };
 
 };

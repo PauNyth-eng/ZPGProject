@@ -19,11 +19,12 @@ public:
     Shader(const char* vertexPath, const char* fragmentPath);
 
     void use() const;
-
+    void unUse() const;
     ~Shader();
     void updateView(const glm::mat4& view) const;
     void updateProjection(const glm::mat4& projection) const;
     void updatePosition(const glm::vec3& position) const;
+
     void passUniformLocation(const std::string& var, const glm::mat4& matrix) const;
     void passUniformLocation(const char* var, const glm::mat4& matrix) const;
     void passUniformLocation(const std::string& var, const glm::mat3& matrix) const;

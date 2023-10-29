@@ -8,7 +8,7 @@ class TransTranslate :
         public TransComponent
 {
 public:
-    TransTranslate(glm::vec3 move);
+    explicit TransTranslate(glm::vec3 move);
     glm::mat4 Calculate() override;
 private:
     glm::vec3 move;

@@ -7,7 +7,7 @@ class TransScale :
         public TransComponent
 {
 public:
-    TransScale(glm::vec3 scales);
+    explicit TransScale(glm::vec3 scales);
     glm::mat4 Calculate() override;
 private:
     glm::vec3 scales;

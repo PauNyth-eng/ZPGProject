@@ -18,7 +18,7 @@ enum class LightType
     Ambient
 };
 
-enum class Growth {
+enum class Scale {
     none = 0,
     grow = 1,
     shrink = -1

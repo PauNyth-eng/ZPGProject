@@ -1,0 +1,99 @@
+Základy počítačové grafiky 2023/2024
+
+Jméno a příjmení:
+Login:
+
+V několika větách popište kde máte ve zdrojovém kódu danou věc (třída, řádek), jak funguje a jaké má výhody/nevýhody. Splněno nechte, jen pokud je vše splněno a funkční, jinak nesplněno.
+
+
+1. Třída ShaderProgram
+----------------------
+  a) splněno / nesplněno
+     Popis: třída Shader.h/.c, Třída obsahuje jak Id shaderprogramu tak i fragmentu a vertexu.
+
+  b) splněno / nesplněno
+     Popis: v Shader.cpp na řádku 87 je methoda use, ktrá nastavuje aktuální shaderprogram. V metodě je volána funkce glUseProgram, která nastavuje aktuální shaderprogram.
+            na řádku 92 je metoda unUse, která nastavuje aktuální shaderprogram na 0. V metodě je volána funkce glUseProgram, která nastavuje aktuální shaderprogram na 0.
+
+  c) splněno / nesplněno
+     Popis: v Shader.h od řádku 28 do 35, jsou přetížené metody passUniformLocationm, které slouží na posílání uniformních proměnných do shaderu.
+
+  d) splněno / nesplněno
+     Popis: Funkce loadShader, načítá soubor, parametr je cesta k souboru.
+
+
+2. Třída DrawableModel
+----------------------
+  a) splněno / nesplněno
+     Popis: reprezentace DrawableModelu je u mě Object třída. Obsahuje Model, shader program, composite ( transformace ), a struct Material, který je obsažen v Model třídě.
+
+
+3. Transformace
+----------------------
+  a) splněno / nesplněno
+     Popis: Transforamce jsou v paternu Composte, tudiž object obsahuje composite kterému se přidávají transformace.
+
+  b) splněno / nesplněno
+     Popis: Objekt se pohybuje po usečce, zatím jen po vybrání objektu a stisknutí klávesy. Pro volný pohyb "Animace", jsem nestihl, takže mám jen interakci s objekty ve scéně.
+
+  c) splněno / nesplněno
+     Popis: Pro rotaci, menší snaha byla, budu doklepávat později ve třídě "Animace", pro začátek ale je dostačující. Nastaví se objektu přes Builder nejáká rotace a objekt bude rotovat.
+
+  d) splněno / nesplněno
+     Popis: Návrhový vzor Komposite použit.
+
+
+4. Třída Camera
+----------------------
+  a) splněno / nesplněno
+     Popis: Camera je schopna procházet scénu pomocí kláves W,A,S,D, a rotovat pomocí myši pro pohyb nahoru a dolů jsem použil klávesy mezeník a shift, jak bývá ve hrách.
+
+  b) splněno / nesplněno
+     Popis: Rotace/Rozhlížení je děláno pomoci CallBack funkcí ve trídě Mouse.
+
+  c) splněno / nesplněno
+     Popis: Camera i Myš posílají notifikaci pomocí Observeru, kde myš při pohybu a kamera taky.
+
+
+5. Třída Light
+----------------------
+  a) splněno / nesplněno
+     Popis: Třída Light, obsahuje více druhů světel, Spotlight, Directional a Positioned, a třída Light je také AmbientLight. útlum počítím v ShaderFragmentu pomocí vzdálenosti. Světlo je propojené s Observerem.
+
+  b) splněno / nesplněno
+     Popis: Světlo reaguje na změny, lépe řečeno Observer upozorní Shader že světlo změnilo nějaký atribut a updatne hodnoty.
+
+6. Třída Material
+----------------------
+  a) splněno / nesplněno
+     Popis: Material je v souboru Model, jako struktura, po použití knihovny assimp, jsem zjistil že se načítá i materiál, tak jsem přidal danou strukturu.
+     ještě s ní ale nepracuji, později s Textury si myslím, že ji budu potřebovat.
+
+
+
+Testovací scény
+
+1) Základní test Phongova osvětlovacího modelu.
+----------------------
+  splněno / nesplněno
+  Popis:
+
+2) Test na rotaci a jeji skládání.
+----------------------
+  splněno / nesplněno
+  Popis:
+
+3) Test na ořezání světla, které nemůže dopadnou na plochu.
+----------------------
+  splněno / nesplněno
+  Popis:
+
+4) Test na změnu velikosti obrazovky.
+----------------------
+  splněno / nesplněno
+  Popis:
+
+5) Testování na více objektů a použití více shaderu ve scéně (procházení lesa).
+----------------------
+  splněno / nesplněno
+  Popis:

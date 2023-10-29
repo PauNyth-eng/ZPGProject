@@ -89,6 +89,11 @@ void Shader::use() const
     glUseProgram(shaderId);
 }
 
+void Shader::unUse() const {
+    glUseProgram(0);
+}
+
+
 bool Shader::checkShader() const {
 
     GLint status;
@@ -243,3 +248,4 @@ void Shader::applyLight(SpotLight & light) {
     passUniformLocation("lights[" + std::to_string(light.index) + "].direction", light.GetPosition());
     passUniformLocation("lights[" + std::to_string(light.index) + "].cutoff", glm::cos(glm::radians(light.GetCutOff())));
 }
+
