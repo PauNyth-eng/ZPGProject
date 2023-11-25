@@ -18,8 +18,8 @@ private:
     glm::mat4 projectMat = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 200.0f);
 
     glm::vec3 eye{ 0.f, 1.f, 3.f };
-    glm::vec3 target{ 0.f };
-    glm::vec3 up{ 0.f, 1.f, 0.f };
+    glm::vec3 target{ 0., 5., 0. };
+    glm::vec3 up{ 0.f, 6.f, 0.f };
 
     float fi = 1.5f * M_PI;
     float psi = 0.f;
@@ -45,7 +45,7 @@ public:
 
     void setPosition(glm::vec3 pos);
     void move(glm::vec3 delta);
-
+    glm::vec3 getTarget() const;
     void moveSideways(Direction dir);
     void moveForward(Direction dir);
     void moveUpDown(Direction dir);

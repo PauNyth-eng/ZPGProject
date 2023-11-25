@@ -28,6 +28,7 @@ private:
 
     [[nodiscard]] glm::mat4 transformation() const;
     std::reference_wrapper<Shader> shader;
+    std::shared_ptr<Texture> texture;
     std::shared_ptr<Model> model;
     unsigned int id;
 
@@ -49,7 +50,7 @@ private:
 
 public:
     Object() = delete;
-    Object(std::shared_ptr<Model> model, Shader& shader);
+    Object(std::shared_ptr<Model> model, Shader& shader, std::shared_ptr<Texture> texture);
     void draw() const;
     void update(double dt);
     void AddTransformation(TransComponent* component);
@@ -82,6 +83,7 @@ public:
     {
         std::shared_ptr<Model> model;
         Shader* shader = nullptr;
+        std::shared_ptr<Texture> texture;
 
 
         glm::vec3 rotationRadians{ 0.f };
@@ -97,7 +99,8 @@ public:
     public:
         Builder& setModel(std::shared_ptr<Model> model);
         Builder& setShader(Shader& shader);
-        Builder& emplaceObject(std::shared_ptr<Model> model, Shader& shader);
+        Builder & setTexture(std::shared_ptr<Texture> texture);
+        Builder& emplaceObject(std::shared_ptr<Model> model, Shader& shader, std::shared_ptr<Texture> texture);
         Builder& setRotation(glm::vec3 radians, glm::vec3 direction, glm::vec3 rotationCenter, float radius = 0.0f);
         Builder& setPosition(glm::vec3 position);
         Builder& setPosition(float x, float y, float z);

@@ -9,6 +9,11 @@ std::unordered_map<std::string, std::shared_ptr<Model>> ModelLoader::models;
 
 void Mesh::Draw(unsigned int id, Shader& shader)
 {
+    if(texture) {
+        texture->bind(shader);
+    }
+
+
     glStencilFunc(GL_ALWAYS, id, 0xFF);
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
@@ -130,7 +135,7 @@ Mesh ModelLoader::processMesh(aiMesh& mesh, const aiScene& scene, const Model& m
     if (not mat.diffuseMap.empty()) {
         std::string tex = dewindows(model.directory + "/" + lufthansa(mat.diffuseMap));
         std::cout << tex << std::endl;
-        //texture = TextureManager::getOrEmplace(tex, tex);
+        texture = TextureManager::getOrEmplace(tex, tex);
     }
 
     return Mesh(std::move(vertices), std::move(indices), texture, mat);
@@ -249,4 +254,10 @@ std::shared_ptr<Model> ModelLoader::loadModel(const std::string& key) {
 
 std::string ModelLoader::formatName(const std::string& model) {
     return "resources/Models/" + model + ".obj";
+}
+
+void Model::applyTexture(const std::shared_ptr<Texture>& texture) {
+    for (auto & mesh : meshes) {
+        mesh.applyTexture(texture);
+    }
 }

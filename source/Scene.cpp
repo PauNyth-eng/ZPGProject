@@ -3,11 +3,6 @@
 //
 #include "Scene.h"
 
-Scene::Scene(std::vector<Object> objects, glm::vec3 cameraPos) : objects(std::move(objects))
-{
-    Init();
-    camera.setPosition(cameraPos);
-}
 
 
 void Scene::setShaderCount() const
@@ -27,6 +22,8 @@ void Scene::Update(double timeDelta)
 {
 
     camera.update(timeDelta);
+    flashlight->SetPosition(camera.position());
+    flashlight->SetDirection(camera.getTarget());
     skybox->draw();
     for (auto& obj : objects)
     {
@@ -69,9 +66,11 @@ size_t Scene::indexOf(unsigned int objectId)
 }
 
 Scene::Scene(std::vector<Object> objects, AmbientLight ambientLight, std::vector<std::shared_ptr<Light>> lights,
-             glm::vec3 cameraPos, std::shared_ptr<Skybox> skybox) : objects(std::move(objects)), ambient(std::move(ambientLight)), lights(std::move(lights)), skybox(std::move(skybox)){
+             glm::vec3 cameraPos, std::shared_ptr<Skybox> skybox ) : objects(std::move(objects)), ambient(std::move(ambientLight)), lights(std::move(lights)), skybox(std::move(skybox)){
     Init();
     camera.setPosition(cameraPos);
+    //flashlight = std::make_shared<SpotLight>(glm::vec3(1.f), glm::vec3(0.f), glm::vec3(0.f), 12.5f);
+
 }
 
 size_t Scene::lightCount() const {
@@ -207,7 +206,7 @@ Scene* Scene::Builder::build()
             ambient,
             lights,
             cameraPos,
-            initSkybox()
+            initSkybox(),
     };
 
     scene->camera.registerObserver(ShaderManager::constant());
@@ -215,12 +214,19 @@ Scene* Scene::Builder::build()
     scene->camera.registerObserver(ShaderManager::phong());
     scene->camera.registerObserver(ShaderManager::blinn());
     scene->camera.registerObserver(ShaderManager::skybox());
-
     Mouse::instance().registerObserver(scene->camera);
 
+    scene->flashlight = std::make_shared<SpotLight>(glm::vec3(1.f), glm::vec3(0.f), glm::vec3(0.f, 5.f, 0.f), 15.5f);
+    scene->flashlight->registerObserver(ShaderManager::constant());
+    scene->flashlight->registerObserver(ShaderManager::lambert());
+    scene->flashlight->registerObserver(ShaderManager::phong());
+    scene->flashlight->registerObserver(ShaderManager::blinn());
+    scene->flashlight->index = scene->lights.size();
+    scene->lights.emplace_back(scene->flashlight);
     reset();
     return scene;
 }
+
 
 Scene::Builder &Scene::Builder::emplaceLight(glm::vec3 color, glm::vec3 data, LightType type) {
     ::emplaceLight(color, data, type, lights);
@@ -240,3 +246,5 @@ Scene::Builder &Scene::Builder::emplaceAmbientLight(glm::vec3 color) {
     ambient.registerObserver(ShaderManager::blinn());
     return *this;
 }
+
+

@@ -9,7 +9,7 @@ uniform mat4 projectionMatrix;
 out vec3 color;
 out vec4 ex_worldPosition;
 out vec3 ex_worldNormal;
-
+out vec2 uv;
 
 layout(location=0) in vec3 positionVec;
 layout(location=1) in vec3 normalVec;
@@ -21,4 +21,5 @@ void main ()
     ex_worldNormal =  normalize(transpose(inverse(mat3(modelMatrix))) * normalVec);
     color = vec3 (1 ,1 ,1 );
     gl_Position = (projectionMatrix * viewMatrix * modelMatrix) * vec4 (positionVec, 1.0);
+    uv = in_uv;
 }

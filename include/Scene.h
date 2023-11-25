@@ -19,17 +19,16 @@ private:
     std::vector<std::shared_ptr<Light>> lights;
     std::shared_ptr<Skybox> skybox;
 
+
 public:
-    Scene(std::vector<Object> objects, glm::vec3 cameraPos);
     void setShaderCount() const;
 
     Scene() = delete;
 
     std::vector<Object> objects;
     const AmbientLight ambient;
-
     Camera camera;
-
+    std::shared_ptr<SpotLight> flashlight;
 
     size_t lightCount() const;
 
@@ -63,12 +62,11 @@ public:
     public:
 
         Builder();
-        Builder & emplaceLight(glm::vec3 color, glm::vec3 data, LightType type);
-        Builder & emplaceLight(glm::vec3 color, glm::vec3 pos, glm::vec3 dir, float cutoff);
-        Builder & emplaceAmbientLight(glm::vec3 color);
+        Builder& emplaceLight(glm::vec3 color, glm::vec3 data, LightType type);
+        Builder& emplaceLight(glm::vec3 color, glm::vec3 pos, glm::vec3 dir, float cutoff);
+        Builder& emplaceAmbientLight(glm::vec3 color);
         Builder& setCameraPosition(glm::vec3 position);
         Builder& setCameraPosition(float x, float y, float z);
-
         Builder& addAll(const std::vector<Object>& objects);
         Builder& addObject(const Object& object);
 

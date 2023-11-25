@@ -315,10 +315,23 @@ void Engine::initScene()
     Object::Builder objBuilder;
     Scene::Builder sceneBuilder;
 
-    sceneBuilder
+    scenePtr = sceneBuilder
             .emplaceAmbientLight(glm::vec3{0.1f})
-            .setCameraPosition(0.f, 0.f, 0.f);
-    scenePtr = sceneBuilder.build();
+            .addObject(
+                    objBuilder
+                            .emplaceObject(ModelLoader::get("Plane/untitled"), ShaderManager::phong(), TextureManager::getOrEmplace("house", "resources/textures/grass.png"))
+                            .setPosition(0.f, 10.f, 0.f).setScale(0.005f, 0.005f, 0.005f)
+                            .build()
+            )
+            .addObject(
+                    objBuilder
+                            .emplaceObject(ModelLoader::get("Terrain/teren"), ShaderManager::phong(), TextureManager::getOrEmplace("grass", "resources/textures/grass.jpg"))
+                            .setPosition(0.f, 0.f, 0.f).setScale(2.f, 0.5f, 2.f)
+                            .build()
+            )
+            .setCameraPosition(0.f, 0.f, 0.f)
+            .build();
+
 }
 
 void Engine::updatePlayer(float dt)

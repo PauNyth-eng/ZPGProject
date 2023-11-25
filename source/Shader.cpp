@@ -221,7 +221,6 @@ void Shader::positionChanged(glm::vec3 position, size_t lightIndex, LightType li
         passUniformLocation("lights[" + std::to_string(lightIndex) + "].direction", position);
     } else if (lightType == LightType::Spot) {
 
-        passUniformLocation("lights[" + std::to_string(lightIndex) + "].direction", position);
         passUniformLocation("lights[" + std::to_string(lightIndex) + "].position", position);
     }
 }
@@ -245,7 +244,7 @@ void Shader::applyLight(DirectionalLight & light) {
 
 void Shader::applyLight(SpotLight & light) {
     passUniformLocation("lights[" + std::to_string(light.index) + "].position", light.GetPosition());
-    passUniformLocation("lights[" + std::to_string(light.index) + "].direction", light.GetPosition());
+    passUniformLocation("lights[" + std::to_string(light.index) + "].direction", light.GetDirection());
     passUniformLocation("lights[" + std::to_string(light.index) + "].cutoff", glm::cos(glm::radians(light.GetCutOff())));
 }
 

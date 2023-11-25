@@ -43,7 +43,7 @@ public:
     void applyTexture(std::shared_ptr<Texture> texture);
 private:
     //  render data
-    unsigned int VAO, VBO, EBO;
+    unsigned int VAO{}, VBO{}, EBO{};
     std::vector<Vertex>       vertices;
     std::vector<unsigned int> indices;
     std::shared_ptr<Texture> texture;
@@ -56,7 +56,7 @@ class Model {
 public:
 
     void draw(uint32_t id, Shader& shader) const;
-    //void applyTexture(const std::shared_ptr<Texture>& texture);
+    void applyTexture(const std::shared_ptr<Texture>& texture);
     void AddObj(Mesh&& mesh);
     std::vector<Mesh> meshes;
     std::vector<Material> materials;

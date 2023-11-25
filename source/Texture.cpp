@@ -10,7 +10,9 @@
 
 
 static GLuint loadTexture(const std::string & texturePath) {
-    return SOIL_load_OGL_texture(texturePath.c_str(), SOIL_LOAD_RGBA, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+    GLuint textureId = SOIL_load_OGL_texture(texturePath.c_str(), SOIL_LOAD_RGBA, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+
+    return textureId;
 }
 
 Texture::Texture(const GLuint id, std::string texPath) : textureId(id), texturePath(std::move(texPath)) { }

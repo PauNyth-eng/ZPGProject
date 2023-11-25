@@ -18,7 +18,7 @@ glm::mat4 Object::transformation() const
 
 }
 
-Object::Object(std::shared_ptr<Model> model, Shader& shader) : model(std::move(model)), shader(shader), id(getNextId()), composite(std::make_shared<TransComposite>())
+Object::Object(std::shared_ptr<Model> model, Shader& shader, std::shared_ptr<Texture> texture) : model(std::move(model)), shader(shader), id(getNextId()), composite(std::make_shared<TransComposite>()), texture(std::move(texture))
 {
 
 }
@@ -132,7 +132,7 @@ void Object::Builder::reset()
 {
     model = nullptr;
     shader = nullptr;
-
+    texture = nullptr;
     rotationRadians = glm::vec3{ 0.f };
     position = glm::vec3{ 0.f };
     scales = glm::vec3{ 1.f };
@@ -143,7 +143,7 @@ void Object::Builder::reset()
 
 Object Object::Builder::createObject()
 {
-    return Object{ std::move(model), *shader };
+    return Object{ std::move(model), *shader , std::move(texture)};
 }
 
 Object::Builder& Object::Builder::setModel(std::shared_ptr<Model> model)
@@ -158,9 +158,9 @@ Object::Builder& Object::Builder::setShader(Shader& shader)
     return *this;
 }
 
-Object::Builder& Object::Builder::emplaceObject(std::shared_ptr<Model> model, Shader& shader)
+Object::Builder& Object::Builder::emplaceObject(std::shared_ptr<Model> model, Shader& shader, std::shared_ptr<Texture> texture)
 {
-    return setModel(std::move(model)).setShader(shader);
+    return setModel(std::move(model)).setTexture(std::move(texture)).setShader(shader);
 }
 
 
@@ -220,6 +220,11 @@ Object::Builder &Object::Builder::setRotation(glm::vec3 radians, glm::vec3 direc
     this->direction = direction;
     this->rotationCenter = rotationCenter;
     this->radius = radius;
+    return *this;
+}
+
+Object::Builder &Object::Builder::setTexture(std::shared_ptr<Texture> texture) {
+    texture = std::move(texture);
     return *this;
 }
 

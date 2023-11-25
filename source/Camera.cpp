@@ -13,6 +13,11 @@ void Camera::calcTarget()
     target = glm::vec3{ std::cos(fi), std::sin(psi), std::sin(fi) };
 }
 
+glm::vec3 Camera::getTarget() const
+{
+    return target;
+}
+
 void Camera::capAngles()
 {
     if (fi < 0) {
