@@ -17,6 +17,8 @@
 #include "Model.h"
 #include "Enums.h"
 #include "Shader.h"
+#include "Texture.h"
+
 class Object
 {
 private:

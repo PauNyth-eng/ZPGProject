@@ -25,7 +25,9 @@ void Scene::Init()
 
 void Scene::Update(double timeDelta)
 {
+
     camera.update(timeDelta);
+    skybox->draw();
     for (auto& obj : objects)
     {
         obj.update(timeDelta);
@@ -67,7 +69,7 @@ size_t Scene::indexOf(unsigned int objectId)
 }
 
 Scene::Scene(std::vector<Object> objects, AmbientLight ambientLight, std::vector<std::shared_ptr<Light>> lights,
-             glm::vec3 cameraPos) : objects(std::move(objects)), ambient(std::move(ambientLight)), lights(std::move(lights)){
+             glm::vec3 cameraPos, std::shared_ptr<Skybox> skybox) : objects(std::move(objects)), ambient(std::move(ambientLight)), lights(std::move(lights)), skybox(std::move(skybox)){
     Init();
     camera.setPosition(cameraPos);
 }
@@ -183,19 +185,36 @@ void Scene::Builder::reset()
 }
 
 
+static std::vector<std::string> cubemapTextures {
+        "resources/textures/space/right.png",
+        "resources/textures/space/left.png",
+        "resources/textures/space/top.png",
+        "resources/textures/space/bottom.png",
+        "resources/textures/space/front.png",
+        "resources/textures/space/back.png"
+};
+
+static std::shared_ptr<Skybox> initSkybox() {
+    return std::make_shared<Skybox>(
+            TextureManager::cubeMap("skybox", cubemapTextures)
+    );
+}
+
 Scene* Scene::Builder::build()
 {
     auto* scene = new Scene{
             std::move(objects),
             ambient,
             lights,
-            cameraPos
+            cameraPos,
+            initSkybox()
     };
 
     scene->camera.registerObserver(ShaderManager::constant());
     scene->camera.registerObserver(ShaderManager::lambert());
     scene->camera.registerObserver(ShaderManager::phong());
     scene->camera.registerObserver(ShaderManager::blinn());
+    scene->camera.registerObserver(ShaderManager::skybox());
 
     Mouse::instance().registerObserver(scene->camera);
 

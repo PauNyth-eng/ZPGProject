@@ -20,6 +20,11 @@ Shader& ShaderManager::constant()
     return instance()._constant;
 }
 
+Shader& ShaderManager::skybox()
+{
+    return instance()._skybox;
+}
+
 Shader& ShaderManager::lambert()
 {
     return instance()._lambert;
@@ -45,7 +50,10 @@ ShaderManager::ShaderManager() : _constant("../resources/Shaders/Vertex.vert", "
                                     _lambert("../resources/Shaders/Vertex.vert", "../resources/Shaders/Lambert.frag"),
                                     _phong("../resources/Shaders/Vertex.vert", "../resources/Shaders/Phong.frag"),
                                     _phong2("../resources/Shaders/Vertex.vert", "../resources/Shaders/Phong2.frag"),
-                                    _blinn("../resources/Shaders/Vertex.vert", "../resources/Shaders/Blinn.frag")
+                                    _blinn("../resources/Shaders/Vertex.vert", "../resources/Shaders/Blinn.frag"),
+                                    _skybox("../resources/Shaders/Skybox.vert", "../resources/Shaders/Skybox.frag")
 {
 
 }
+
+

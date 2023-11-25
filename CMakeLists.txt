@@ -27,6 +27,10 @@ add_executable(ZPGProject
         main.cpp
         include/Light.h
         source/Light.cpp
+        include/Skybox.h
+        include/Texture.h
+        source/Skybox.cpp
+        source/Texture.cpp
 )
 
 file(COPY resources DESTINATION .)

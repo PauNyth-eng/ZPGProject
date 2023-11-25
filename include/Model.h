@@ -9,7 +9,7 @@
 #include "Shader.h"
 #include <vector>
 #include <filesystem>
-
+#include "Texture.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -31,12 +31,6 @@ struct Material {
     float shininess = 0.f;
 };
 
-struct Texture
-{
-    unsigned int id;
-    std::string type;
-    std::string path;
-};
 
 
 class Mesh {
@@ -101,6 +95,7 @@ class ModelLoader {
     static std::string dewindows(std::string str);
     static glm::vec3 extractVector(aiVector3D& vec);
     static std::string lufthansa(std::string str);
+
 public:
 
     static std::shared_ptr<Model> get(const std::string& model);

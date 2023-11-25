@@ -9,13 +9,16 @@
 #include "Object.h"
 #include "ShaderManager.h"
 #include "Light.h"
+#include "Skybox.h"
 class Scene
 {
 private:
     Scene(std::vector<Object> objects, AmbientLight ambientLight,
-          std::vector<std::shared_ptr<Light>> lights, glm::vec3 cameraPos);
+          std::vector<std::shared_ptr<Light>> lights, glm::vec3 cameraPos, std::shared_ptr<Skybox> skybox);
     void applyLights() const;
     std::vector<std::shared_ptr<Light>> lights;
+    std::shared_ptr<Skybox> skybox;
+
 public:
     Scene(std::vector<Object> objects, glm::vec3 cameraPos);
     void setShaderCount() const;
@@ -24,6 +27,7 @@ public:
 
     std::vector<Object> objects;
     const AmbientLight ambient;
+
     Camera camera;
 
 

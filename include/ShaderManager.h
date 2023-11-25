@@ -11,6 +11,7 @@ class ShaderManager
     Shader _phong;
     Shader _phong2;
     Shader _blinn;
+    Shader _skybox;
 
 
     static ShaderManager* sm;
@@ -24,5 +25,6 @@ public:
     static Shader& phong();
     static Shader& phong2();
     static Shader& blinn();
+    static Shader& skybox();
 };
 
