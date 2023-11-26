@@ -41,7 +41,7 @@ typedef Light AmbientLight;
 
 class DirectionalLight : public Light
 {
-    mutable glm::vec3 direction { 0.f };
+    mutable glm::vec3 direction { 0.f, -1.f, 0.f };
 public:
 
     DirectionalLight() = default;

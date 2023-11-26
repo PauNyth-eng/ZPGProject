@@ -42,20 +42,18 @@ void main ()
         {
             const float specularStrength = 0.3;
 
-
-            vec3 viewDir = normalize(cameraPosition - worldPosition);
-            vec3 lightDir = normalize(lightPosition - worldPosition);
-            vec3 reflectionDir = reflect(-lightDir, worldNormal);
-
+            vec3 lightDir = normalize(-lightDirection);
             float dot_product = dot(lightDir, worldNormal);
             vec3 diffuse = max(dot_product, 0.0) * lightColor;
 
-            float specValue = pow(max(dot(viewDir, reflectionDir), 0.0), 1);
+            vec3 viewDir = normalize(cameraPosition - worldPosition);
+            vec3 reflectionDir = reflect(-lightDir, worldNormal);
+
+            float specValue = pow(max(dot(viewDir, reflectionDir), 0.0), 16);
             vec3 spec = specularStrength * specValue * lightColor;
             if (dot_product < 0.0) {
                 spec = vec3(0.0);
             }
-
 
             fragColor += (diffuse + spec) * color;
         }
@@ -88,8 +86,8 @@ void main ()
         {
             vec3 lightDir = normalize(lightPosition - worldPosition);
 
-            float theta = dot(lightDirection, normalize(-lightDir));
-            if (theta <= cutoff) {
+            float theta = dot(lightDirection, normalize(worldPosition - lightPosition));
+            if (theta <= 0.2) {
                 frag_colour += vec4(0.0);
                 continue;
             }

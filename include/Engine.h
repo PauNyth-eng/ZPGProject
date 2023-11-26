@@ -42,7 +42,7 @@ private:
     static Engine& instance();
     void deselect();
     void selectObject(int mouseX, int mouseY);
-
+    void emplaceObject(const int mouseX, const int mouseY);
     void deselectObject(int mouseX, int mouseY);
     void onButtonPress(const MouseData & mouseData);
     bool hasSelected();

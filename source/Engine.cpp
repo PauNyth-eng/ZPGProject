@@ -316,10 +316,11 @@ void Engine::initScene()
     Scene::Builder sceneBuilder;
 
     scenePtr = sceneBuilder
-            .emplaceAmbientLight(glm::vec3{0.1f})
+            .emplaceAmbientLight(glm::vec3{0.0001f})
+            .emplaceLight(glm::vec3 { 8.f }, glm::vec3 { -3.f, -8.f, 0.f }, LightType::Directional)
             .addObject(
                     objBuilder
-                            .emplaceObject(ModelLoader::get("Plane/untitled"), ShaderManager::phong(), TextureManager::getOrEmplace("house", "resources/textures/grass.png"))
+                            .emplaceObject(ModelLoader::get("Plane/untitled"), ShaderManager::phong(), TextureManager::getOrEmplace("grass", "resources/textures/grass.png"))
                             .setPosition(0.f, 10.f, 0.f).setScale(0.005f, 0.005f, 0.005f)
                             .build()
             )
@@ -329,7 +330,7 @@ void Engine::initScene()
                             .setPosition(0.f, 0.f, 0.f).setScale(2.f, 0.5f, 2.f)
                             .build()
             )
-            .setCameraPosition(0.f, 0.f, 0.f)
+            .setCameraPosition(0.f, 6.f, 0.f)
             .build();
 
 }
@@ -358,7 +359,7 @@ void Engine::onButtonPress(const MouseData & mouseData) {
     if (mouseData.lbPressed()) {
         selectObject(mouseData.x, mouseData.y);
     } else if (mouseData.rbPressed()) {
-        deselectObject(mouseData.x, mouseData.y);
+        emplaceObject(mouseData.x, mouseData.y);
     }
 }
 
@@ -367,4 +368,25 @@ void Engine::notify(EventType eventType, void* object)
     if (eventType == EventType::MouseButtonPressed) {
         onButtonPress(((Mouse*)object)->data());
     }
+}
+
+void Engine::emplaceObject(const int mouseX, const int mouseY) {
+    GLfloat depth;
+
+    const GLint x = mouseX;
+    const GLint y = bufferHeight - mouseY;
+
+    glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+
+    glm::vec3 screenX = glm::vec3 { x, y, depth };
+    glm::vec4 viewport { 0, 0, bufferWidth, bufferHeight };
+    auto pos = glm::unProject(screenX, scene().camera.view(), scene().camera.projection(), viewport);
+
+    scene().objects.emplace_back(
+            Object::Builder()
+                    .emplaceObject(ModelLoader::get("Plane/untitled"), ShaderManager::phong(),
+                                   TextureManager::get("grass"))
+                    .setPosition(pos.x, pos.y + 1.6f, pos.z).setScale(0.001f, 0.001f, 0.001f)
+                    .build()
+    );
 }
