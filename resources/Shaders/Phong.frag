@@ -8,6 +8,7 @@ struct Light
     vec3 direction;
     float cutoff;
     vec3 lightColor;
+    float outerCutoff;
     int lightType;
 };
 
@@ -32,6 +33,74 @@ uniform Light lights[MAX_LIGHTS];
 uniform vec3 ambientColor;
 uniform int lightCount;
 uniform sampler2D textureUnitID;
+
+
+vec3 calculateDirectionalLight(Light light, vec3 normal, vec3 viewDir, vec3 color)
+{
+    vec3 lightDir = normalize(-light.direction);
+    float dot_product = dot(lightDir, normal);
+    vec3 diffuse = max(dot_product, 0.0) * light.lightColor;
+
+    vec3 reflectionDir = reflect(-lightDir, normal);
+    float specValue = pow(max(dot(viewDir, reflectionDir), 0.0), material.shininess);
+    vec3 spec = specValue * light.lightColor * material.specular;
+
+    if (dot_product < 0.0) {
+        spec = vec3(0.0);
+    }
+
+    return (diffuse + spec) * color;
+}
+
+vec3 calculatePointLight(Light light, vec3 normal, vec3 viewDir, vec3 color)
+{
+    vec3 worldPosition = vec3(ex_worldPosition);
+    vec3 lightDir = normalize(light.position - worldPosition);
+    float dist = length(light.position - worldPosition);
+    float attenuation = clamp(5.0 / dist, 0.0, 1.0);
+
+    float dot_product = dot(lightDir, normal);
+    vec3 diffuse = max(dot_product, 0.0) * attenuation * material.diffuse;
+
+    vec3 reflectionDir = reflect(-lightDir, normal);
+    float specValue = pow(max(dot(viewDir, reflectionDir), 0.0), material.shininess);
+    vec3 spec = specValue * light.lightColor * material.specular;
+
+    if (dot_product < 0.0) {
+        spec = vec3(0.0);
+    }
+
+    return (diffuse + spec) * color;
+}
+
+vec3 calculateSpotLight(Light light, vec3 normal, vec3 viewDir, vec3 color)
+{
+    vec3 worldPosition = vec3(ex_worldPosition);
+    vec3 lightDir = normalize(light.position - worldPosition);
+    float dist = length(light.position - worldPosition);
+    float attenuation = clamp(5.0 / dist, 0.0, 1.0);
+
+    float theta = dot(lightDir, normalize(-light.direction));
+    float intensity = smoothstep(light.outerCutoff, light.cutoff, theta);
+    if (theta <= light.cutoff) {
+        return vec3(0.0);
+    }
+
+    float dot_product = dot(lightDir, normal);
+    vec3 diffuse = max(dot_product, 0.0) * attenuation * material.diffuse * intensity;
+
+    vec3 reflectionDir = reflect(-lightDir, normal);
+    float specValue = pow(max(dot(viewDir, reflectionDir), 0.0), material.shininess);
+    vec3 spec = specValue * light.lightColor * material.specular * intensity;
+
+    if (dot_product < 0.0) {
+        spec = vec3(0.0);
+    }
+
+    return (diffuse + spec) * color;
+}
+
+
 void main ()
 {
     vec3 fragColor = vec3(0.0, 0.0, 0.0);
@@ -49,77 +118,20 @@ void main ()
 
         if (lights[i].lightType == 0)
         {
-            const float specularStrength = 0.3;
-
-            vec3 lightDir = normalize(-lightDirection);
-            float dot_product = dot(lightDir, worldNormal);
-            vec3 diffuse = max(dot_product, 0.0) * lightColor  * material.diffuse;
-
             vec3 viewDir = normalize(cameraPosition - worldPosition);
-            vec3 reflectionDir = reflect(-lightDir, worldNormal);
-
-            float specValue = pow(max(dot(viewDir, reflectionDir), 0.0), material.shininess);
-            vec3 spec = specularStrength * specValue * lightColor *  material.specular;
-            if (dot_product < 0.0) {
-                spec = vec3(0.0);
-            }
-
-            fragColor += (diffuse + spec) * color;
+            fragColor += calculateDirectionalLight(lights[i], worldNormal, viewDir, color);
         }
         else if (lights[i].lightType == 1)
         {
-            //const float specularStrength = 0.3;
-
-            float dist = length(lightPosition - worldPosition);
-            float attenuation = clamp(5.0 / dist, 0.0, 1.0);
-
             vec3 viewDir = normalize(cameraPosition - worldPosition);
-            vec3 lightDir = normalize(lightPosition - worldPosition);
-            vec3 reflectionDir = reflect(-lightDir, worldNormal);
-
-            float dot_product = dot(lightDir, worldNormal);
-            vec3 diffuse = max(dot_product, 0.0) * color * attenuation * material.diffuse;
-
-            float specValue = pow(max(dot(viewDir, reflectionDir), 0.0), material.shininess);
-            vec3 spec = /*specularStrength */ specValue * lightColor  * material.specular;
-
-            if (dot_product < 0.0) {
-                spec = vec3(0.0);
-            }
-            vec3 specular = spec * attenuation;
-
-            fragColor += (diffuse + specular);
+            fragColor += calculatePointLight(lights[i], worldNormal, viewDir, color);
 
         }
         else if (lights[i].lightType == 2)
         {
-            vec3 lightDir = normalize(lightPosition - worldPosition);
-
-            float theta = dot(lightDirection, normalize(worldPosition - lightPosition));
-            if (theta <= 0.2) {
-                frag_colour += vec4(0.0);
-                continue;
-            }
-            //const float specularStrength = 0.3;
-
-            float dist = length(lightPosition - worldPosition);
-            float attenuation = clamp(5.0 / dist, 0.0, 1.0);
 
             vec3 viewDir = normalize(cameraPosition - worldPosition);
-            vec3 reflectionDir = reflect(-lightDir, worldNormal);
-
-            float dot_product = dot(lightDir, worldNormal);
-            vec3 diffuse = max(dot_product, 0.0) * color * attenuation  * material.diffuse;
-
-            float specValue = pow(max(dot(viewDir, reflectionDir), 0.0), material.shininess);
-            vec3 spec = /*specularStrength */ specValue * lightColor  * material.specular;
-
-            if (dot_product < 0.0) {
-                spec = vec3(0.0);
-            }
-            vec3 specular = spec * attenuation;
-
-            fragColor += (diffuse + specular);
+            fragColor += calculateSpotLight(lights[i], worldNormal, viewDir, color);
 
         }
 

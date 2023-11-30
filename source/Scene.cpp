@@ -22,10 +22,11 @@ void Scene::Update(double timeDelta)
 {
 
     camera.update(timeDelta);
-//    flashlight->SetPosition(camera.position());
-//    flashlight->SetDirection(camera.getTarget());
+    flashlight->SetPosition(camera.position());
+    flashlight->SetDirection(camera.getTarget());
 //    printf("Camera position: %f %f %f\n", camera.position().x, camera.position().y, camera.position().z);
 //    printf("Camera target: %f %f %f\n", camera.getTarget().x, camera.getTarget().y, camera.getTarget().z);
+//    printf("Flashlight Direction: %f %f %f\n", flashlight->GetDirection().x, flashlight->GetDirection().y, flashlight->GetDirection().z);
     skybox->draw();
     for (auto& obj : objects)
     {
@@ -71,7 +72,7 @@ Scene::Scene(std::vector<Object> objects, AmbientLight ambientLight, std::vector
              glm::vec3 cameraPos, std::shared_ptr<Skybox> skybox ) : objects(std::move(objects)), ambient(std::move(ambientLight)), lights(std::move(lights)), skybox(std::move(skybox)){
     Init();
     camera.setPosition(cameraPos);
-    //flashlight = std::make_shared<SpotLight>(glm::vec3(1.f), glm::vec3(0.f), glm::vec3(0.f), 12.5f);
+    //flashlight = std::make_shared<SpotLight>(glm::vec3(1.f), cameraPos, glm::vec3(0.f), 12.5f);
 
 }
 
@@ -218,13 +219,13 @@ Scene* Scene::Builder::build()
     scene->camera.registerObserver(ShaderManager::skybox());
     Mouse::instance().registerObserver(scene->camera);
 
-//    scene->flashlight = std::make_shared<SpotLight>(glm::vec3(1.f), glm::vec3(0.f), glm::vec3(0.f, -5.f, 0.f), 3.5f);
-//    scene->flashlight->registerObserver(ShaderManager::constant());
-//    scene->flashlight->registerObserver(ShaderManager::lambert());
-//    scene->flashlight->registerObserver(ShaderManager::phong());
-//    scene->flashlight->registerObserver(ShaderManager::blinn());
-//    scene->flashlight->index = scene->lights.size();
-//    scene->lights.emplace_back(scene->flashlight);
+    scene->flashlight = std::make_shared<SpotLight>(glm::vec3(1.f), cameraPos, scene->camera.getTarget(), 20.f);
+    scene->flashlight->registerObserver(ShaderManager::constant());
+    scene->flashlight->registerObserver(ShaderManager::lambert());
+    scene->flashlight->registerObserver(ShaderManager::phong());
+    scene->flashlight->registerObserver(ShaderManager::blinn());
+    scene->flashlight->index = scene->lights.size();
+    scene->lights.emplace_back(scene->flashlight);
     reset();
     return scene;
 }

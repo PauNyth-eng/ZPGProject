@@ -246,5 +246,6 @@ void Shader::applyLight(SpotLight & light) {
     passUniformLocation("lights[" + std::to_string(light.index) + "].position", light.GetPosition());
     passUniformLocation("lights[" + std::to_string(light.index) + "].direction", light.GetDirection());
     passUniformLocation("lights[" + std::to_string(light.index) + "].cutoff", glm::cos(glm::radians(light.GetCutOff())));
+    passUniformLocation("lights[" + std::to_string(light.index) + "].outerCutoff", glm::cos(glm::radians(25.f)));
 }
 

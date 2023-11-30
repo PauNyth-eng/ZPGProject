@@ -317,7 +317,7 @@ void Engine::initScene()
 
     scenePtr = sceneBuilder
             .emplaceAmbientLight(glm::vec3{0.0001f})
-            .emplaceLight(glm::vec3 { 8.f }, glm::vec3 { -3.f, -8.f, 0.f }, LightType::Directional)
+            //.emplaceLight(glm::vec3 { 1.f, 0.f, 0.f }, glm::vec3 { -10.f, 3.f, -5.f }, glm::vec3 { 0.f, -2.f, 0.f }, 12.5f)
             .addObject(
                     objBuilder
                             .emplaceObject(ModelLoader::get("Plane/untitled"), ShaderManager::phong(), TextureManager::getOrEmplace("grass", "resources/textures/grass.png"))
