@@ -11,12 +11,22 @@ struct Light
     int lightType;
 };
 
+struct Material
+{
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    int shininess;
+};
 
 
 in vec3 color;
 in vec4 ex_worldPosition;
 in vec3 ex_worldNormal;
 in vec2 uv;
+
+
+uniform Material material;
 uniform vec3 cameraPosition;
 uniform Light lights[MAX_LIGHTS];
 uniform vec3 ambientColor;
@@ -25,10 +35,9 @@ uniform sampler2D textureUnitID;
 void main ()
 {
     vec3 fragColor = vec3(0.0, 0.0, 0.0);
-
     vec3 worldNormal = normalize(ex_worldNormal);
     vec3 worldPosition = vec3(ex_worldPosition);
-
+    //ambientColor = material.ambient;
     vec4 tex = texture(textureUnitID, uv);
     vec3 color = vec3(tex.x, tex.y, tex.z);
     for (int i = 0; i < lightCount; i++)
@@ -44,13 +53,13 @@ void main ()
 
             vec3 lightDir = normalize(-lightDirection);
             float dot_product = dot(lightDir, worldNormal);
-            vec3 diffuse = max(dot_product, 0.0) * lightColor;
+            vec3 diffuse = max(dot_product, 0.0) * lightColor  * material.diffuse;
 
             vec3 viewDir = normalize(cameraPosition - worldPosition);
             vec3 reflectionDir = reflect(-lightDir, worldNormal);
 
-            float specValue = pow(max(dot(viewDir, reflectionDir), 0.0), 16);
-            vec3 spec = specularStrength * specValue * lightColor;
+            float specValue = pow(max(dot(viewDir, reflectionDir), 0.0), material.shininess);
+            vec3 spec = specularStrength * specValue * lightColor *  material.specular;
             if (dot_product < 0.0) {
                 spec = vec3(0.0);
             }
@@ -59,7 +68,7 @@ void main ()
         }
         else if (lights[i].lightType == 1)
         {
-            const float specularStrength = 0.3;
+            //const float specularStrength = 0.3;
 
             float dist = length(lightPosition - worldPosition);
             float attenuation = clamp(5.0 / dist, 0.0, 1.0);
@@ -69,10 +78,10 @@ void main ()
             vec3 reflectionDir = reflect(-lightDir, worldNormal);
 
             float dot_product = dot(lightDir, worldNormal);
-            vec3 diffuse = max(dot_product, 0.0) * color * attenuation;
+            vec3 diffuse = max(dot_product, 0.0) * color * attenuation * material.diffuse;
 
-            float specValue = pow(max(dot(viewDir, reflectionDir), 0.0), 1);
-            vec3 spec = specularStrength * specValue * lightColor;
+            float specValue = pow(max(dot(viewDir, reflectionDir), 0.0), material.shininess);
+            vec3 spec = /*specularStrength */ specValue * lightColor  * material.specular;
 
             if (dot_product < 0.0) {
                 spec = vec3(0.0);
@@ -91,7 +100,7 @@ void main ()
                 frag_colour += vec4(0.0);
                 continue;
             }
-            const float specularStrength = 0.3;
+            //const float specularStrength = 0.3;
 
             float dist = length(lightPosition - worldPosition);
             float attenuation = clamp(5.0 / dist, 0.0, 1.0);
@@ -100,10 +109,10 @@ void main ()
             vec3 reflectionDir = reflect(-lightDir, worldNormal);
 
             float dot_product = dot(lightDir, worldNormal);
-            vec3 diffuse = max(dot_product, 0.0) * color * attenuation;
+            vec3 diffuse = max(dot_product, 0.0) * color * attenuation  * material.diffuse;
 
-            float specValue = pow(max(dot(viewDir, reflectionDir), 0.0), 1);
-            vec3 spec = specularStrength * specValue * lightColor;
+            float specValue = pow(max(dot(viewDir, reflectionDir), 0.0), material.shininess);
+            vec3 spec = /*specularStrength */ specValue * lightColor  * material.specular;
 
             if (dot_product < 0.0) {
                 spec = vec3(0.0);
@@ -118,7 +127,7 @@ void main ()
     }
 
 
-    frag_colour = vec4(fragColor + ambientColor + ambientColor, 1.0);
+    frag_colour = vec4(fragColor * material.ambient, 1.0);
 
 
 }

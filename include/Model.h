@@ -28,7 +28,7 @@ struct Material {
     std::string diffuseMap;
     std::string specularMap;
     std::string heightMap;
-    float shininess = 0.f;
+    int shininess = 0;
 };
 
 

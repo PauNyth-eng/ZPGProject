@@ -9,15 +9,19 @@ std::unordered_map<std::string, std::shared_ptr<Model>> ModelLoader::models;
 
 void Mesh::Draw(unsigned int id, Shader& shader)
 {
+    shader.use();
     if(texture) {
         texture->bind(shader);
     }
-
-
+    shader.passUniformLocation("material.diffuse", glm::vec3(1));
+    shader.passUniformLocation("material.specular", material.specular);
+    shader.passUniformLocation("material.ambient", material.ambient);
+    shader.passUniformLocation("material.shininess", material.shininess);
     glStencilFunc(GL_ALWAYS, id, 0xFF);
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
+    shader.unUse();
 }
 
 
@@ -134,7 +138,7 @@ Mesh ModelLoader::processMesh(aiMesh& mesh, const aiScene& scene, const Model& m
     std::shared_ptr<Texture> texture = nullptr;
     if (not mat.diffuseMap.empty()) {
         std::string tex = dewindows(model.directory + "/" + lufthansa(mat.diffuseMap));
-        std::cout << tex << std::endl;
+        //std::cout << tex << std::endl;
         texture = TextureManager::getOrEmplace(tex, tex);
     }
 
