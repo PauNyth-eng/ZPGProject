@@ -3,10 +3,9 @@
 //
 #include "TransTranslate.h"
 
-glm::mat4 TransTranslate::Calculate()
+glm::mat4 TransTranslate::Calculate(glm::mat4 t)
 {
-    glm::mat4 temp = glm::translate(glm::mat4{ 1.f }, move);
-    return temp;
+    return glm::translate(glm::mat4{1.f}, move);
 }
 
 TransTranslate::TransTranslate(glm::vec3 move) : move(move)

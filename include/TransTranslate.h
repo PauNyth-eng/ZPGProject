@@ -9,8 +9,8 @@ class TransTranslate :
 {
 public:
     explicit TransTranslate(glm::vec3 move);
-    glm::mat4 Calculate() override;
-private:
+    glm::mat4 Calculate(glm::mat4 t) override;
     glm::vec3 move;
+
 };
 

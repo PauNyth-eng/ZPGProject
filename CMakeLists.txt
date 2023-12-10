@@ -31,6 +31,8 @@ add_executable(ZPGProject
         include/Texture.h
         source/Skybox.cpp
         source/Texture.cpp
+        source/Movement.cpp
+        include/Movement.h
 )
 
 file(COPY resources DESTINATION .)

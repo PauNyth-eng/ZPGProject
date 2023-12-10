@@ -9,8 +9,7 @@ class TransComposite :
         public TransComponent
 {
 public:
-    glm::mat4 Calculate() override;
-    void AddTransformation(TransComponent* component);
-private:
-    std::vector<TransComponent*> tranformations;
+    glm::mat4 Calculate(glm::mat4 t) override;
+    void AddTransformation(std::shared_ptr<TransComponent> component);
+    std::vector<std::shared_ptr<TransComponent>> tranformations;
 };

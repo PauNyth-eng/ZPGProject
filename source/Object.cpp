@@ -10,14 +10,116 @@ unsigned int Object::objectCount = 0;
 const glm::vec3 Object::defaultColor{ 1, 0, 0 };
 const glm::vec3 Object::secondaryColor{ 0.15, 0.89, 0.68 };
 
-
-glm::mat4 Object::transformation() const
-{
-
-    return composite->Calculate();
-
+void Object::rotate(const glm::vec3 radians) {
+    rotation = radians;
 }
 
+void Object::move(glm::vec3 delta) {
+    translation += delta;
+}
+
+void Object::scale(const glm::vec3 newScales) {
+    scales = newScales;
+}
+glm::mat4 Object::transformation() const
+{
+    if (composite->tranformations.empty())
+    {
+        translateMat = std::make_shared<TransTranslate>(translation);
+        scaleMat = std::make_shared<TransScale>(scales);
+        rotateMatX = std::make_shared<TransRotate>(rotation.x, glm::vec3{1.f, 0.f, 0.f});
+        rotateMatY = std::make_shared<TransRotate>(rotation.y, glm::vec3{0.f, 1.f, 0.f});
+        rotateMatZ = std::make_shared<TransRotate>(rotation.z, glm::vec3{0.f, 0.f, 1.f});
+        composite->AddTransformation(translateMat);
+        composite->AddTransformation(scaleMat);
+        composite->AddTransformation(rotateMatX);
+        composite->AddTransformation(rotateMatY);
+        composite->AddTransformation(rotateMatZ);
+    }
+    translateMat->move = translation;
+    scaleMat->scales = scales;
+    rotateMatX->radians = rotation.x;
+    rotateMatX->radians = rotation.y;
+    rotateMatX->radians = rotation.z;
+
+    return composite->Calculate(glm::mat4 { 1.f });
+    glm::mat4 t = glm::translate(glm::mat4 { 1.f }, translation);
+    t = glm::scale(t, scales);
+    t = glm::rotate(t, rotation.x, { 1.f, 0.f, 0.f });
+    t = glm::rotate(t, rotation.y, { 0.f, 1.f, 0.f });
+    t = glm::rotate(t, rotation.z, { 0.f, 0.f, 1.f });
+    return t;
+}
+
+float Object::getAcc(Direction dir) {
+    return acceleration * (int)dir;
+}
+
+void Object::applyFy(Direction dir) {
+    movementDir.y = getAcc(dir);
+}
+
+void Object::applyFx(Direction dir) {
+    movementDir.x = getAcc(dir);
+}
+
+
+void Object::enableGrowth(Scale direction) {
+    scaleDr = direction;
+}
+float Object::calcNewV(float current, const float acc, const float dec) {
+
+    if (std::abs(current) <= dec) {
+        current = 0;
+    } else {
+        current -= (-1 + (2 * (current > 0))) * dec;
+    }
+
+    return current + acc;
+}
+void Object::disableGrowth() {
+    scaleDr = Scale::none;
+}
+
+void Object::enableRotation(Rotation direction) {
+    rotateDr = direction;
+}
+
+void Object::disableRotation() {
+    rotateDr = Rotation::none;
+}
+
+float Object::capV(float current, float max) {
+    return std::min(std::max(current, -max), max);
+}
+
+void Object::updateGrowth(const float dt) {
+    const float delta = growthV * (int)scaleDr * dt;
+    scale({ scales.x + delta, scales.y + delta, scales.z + delta });
+}
+
+void Object::updateRotation(const float dt) {
+
+    const float dec = rotationDec * dt;
+    const float acc = rotationAcc * dt * (int)rotateDr;
+
+    rotationV = capV(calcNewV(rotationV, acc, dec), rotationMax);
+
+    rotation.y += rotationV * dt;
+}
+
+void Object::updateForces(const float dt) {
+
+    const float dec = deceleration * dt;
+    const float acc = acceleration * dt;
+
+    const float fx = capV(calcNewV(forces.x, acc * movementDir.x, dec), maxV);
+    const float fy = capV(calcNewV(forces.y, acc * movementDir.y, dec), maxV);
+
+    forces = { fx, fy };
+
+    move({ fx * dt, fy * dt, 0.f });
+}
 Object::Object(std::shared_ptr<Model> model, Shader& shader, std::shared_ptr<Texture> texture) : model(std::move(model)), shader(shader), id(getNextId()), composite(std::make_shared<TransComposite>()), texture(std::move(texture))
 {
 
@@ -48,71 +150,42 @@ void Object::draw() const {
 }
 
 
-void Object::update(double dt)
-{
-    updateScale(dt);
-    updateRotate(dt);
-    updateMove(dt);
+void Object::update(const double dt) {
+    updateGrowth(dt);
+    updateRotation(dt);
+    updateForces(dt);
+    updateMovement(dt);
 }
 
-void Object::AddTransformation(TransComponent* component)
+void Object::AddTransformation(std::shared_ptr<TransComponent> component)
 {
     this->composite->AddTransformation(component);
 }
 
+void Object::updateMovement(double dt) {
 
-void Object::updateScale(float d) {
-    const float del = 0.1f * (int)scaleDr * d;
-}
-
-void Object::updateRotate(float d) {
-
-}
-
-void Object::updateMove(float d) {
-
-    const float accx = 1.f * d * movementDir.x;
-    const float accy = 1.f * d * movementDir.y;
-
-    //this->position += glm::vec3{ accx, accy, 0.f };
-
-}
-
-void Object::setScaleDr(Scale scaleDr) {
-    this->scaleDr = scaleDr;
-}
-
-void Object::setRotateDr(Rotation rotateDr) {
-    this->rotateDr = rotateDr;
-}
-
-void Object::setScale(glm::vec3 scales) {
-    AddTransformation(new TransScale(scales));
-}
-
-
-
-void Object::setMove(glm::vec3 position) {
-    this->position += position;
-    AddTransformation(new TransTranslate(position));
-}
-
-void Object::setRotate(glm::vec3 radians, glm::vec3 direction, glm::vec3 rotationCenter, float radius) {
-    if (radians == glm::vec3{ 0.f }) {
+    if (not movementCalculator && not *movementCalculator) {
         return;
     }
-    this->radius = radius;
-    this->rotationRadians = radians;
-    this->direction = direction;
-    this->rotationCenter = rotationCenter;
-    AddTransformation(new TransRotate(rotationRadians.x + rotationRadians.y + rotationRadians.z, direction, rotationCenter, radius));
+
+    auto & mc = *(movementCalculator.value());
+    mc.update(dt);
+    translation = mc.currentPosition();
+    rotation = mc.currentHeading();
+
 }
+
+Object::Object(std::shared_ptr<Model> model, Shader & shader, std::shared_ptr<Texture> texture,
+               std::shared_ptr<MovementCalculator> movementCalculator) :
+        model(std::move(model)), shader(shader), texture(std::move(texture)), id(getNextId()),
+        movementCalculator(movementCalculator) { }
 
 void Object::Builder::reset()
 {
     model = nullptr;
     shader = nullptr;
     texture = nullptr;
+    movementCalculator->reset();
     rotationRadians = glm::vec3{ 0.f };
     position = glm::vec3{ 0.f };
     scales = glm::vec3{ 1.f };
@@ -123,7 +196,10 @@ void Object::Builder::reset()
 
 Object Object::Builder::createObject()
 {
-    return Object{ std::move(model), *shader , std::move(texture)};
+    if (movementCalculator && *movementCalculator) {
+        return Object { std::move(model), *shader, std::move(texture), movementCalculator.value() };
+    }
+    return Object { std::move(model), *shader, std::move(texture) };
 }
 
 Object::Builder& Object::Builder::setModel(std::shared_ptr<Model> model)
@@ -185,9 +261,9 @@ Object Object::Builder::build()
     }
 
     Object obj = createObject();
-    obj.setMove(position);
-    obj.setScale(scales);
-    obj.setRotate(rotationRadians, direction, rotationCenter, radius);
+    obj.move(position);
+    obj.scale(scales);
+    obj.rotate(rotationRadians);
     obj.color = color;
 
     reset();
@@ -195,16 +271,19 @@ Object Object::Builder::build()
     return obj;
 }
 
-Object::Builder &Object::Builder::setRotation(glm::vec3 radians, glm::vec3 direction, glm::vec3 rotationCenter, float radius) {
-    this->rotationRadians = radians;
-    this->direction = direction;
-    this->rotationCenter = rotationCenter;
-    this->radius = radius;
-    return *this;
-}
 
 Object::Builder &Object::Builder::setTexture(std::shared_ptr<Texture> texture) {
     texture = std::move(texture);
+    return *this;
+}
+
+Object::Builder &Object::Builder::setRotation(glm::vec3 radians) {
+    rotationRadians = radians;
+    return *this;
+}
+
+Object::Builder & Object::Builder::setMovement(std::shared_ptr<MovementCalculator> mc) {
+    movementCalculator.emplace(std::move(mc));
     return *this;
 }
 

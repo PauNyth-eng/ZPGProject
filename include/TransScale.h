@@ -8,7 +8,6 @@ class TransScale :
 {
 public:
     explicit TransScale(glm::vec3 scales);
-    glm::mat4 Calculate() override;
-private:
+    glm::mat4 Calculate(glm::mat4 t) override;
     glm::vec3 scales;
 };

@@ -7,8 +7,7 @@ TransScale::TransScale(glm::vec3 scales) : scales(scales)
 {
 }
 
-glm::mat4 TransScale::Calculate()
+glm::mat4 TransScale::Calculate(glm::mat4 t)
 {
-    glm::mat4 temp = glm::scale(glm::mat4{ 1.f }, scales);
-    return temp;
+    return glm::scale(glm::mat4{1.f}, scales);
 }

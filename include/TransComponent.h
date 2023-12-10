@@ -10,6 +10,6 @@
 class TransComponent
 {
 public:
-    virtual glm::mat4 Calculate() = 0;
+    virtual glm::mat4 Calculate(glm::mat4 t) = 0;
 };
 

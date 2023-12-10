@@ -65,12 +65,8 @@ void Engine::keyCallback(GLFWwindow *window, int key, int scancode, int action, 
             scene().camera.rotateHor((action == GLFW_RELEASE) ? Direction::none : Direction::right);
             break;
         case GLFW_KEY_U:
-            if (hasSelected())
-                getSelected().composite->AddTransformation(new TransTranslate({0.0f, 0.0f, 0.1f}));
             break;
         case GLFW_KEY_J:
-            if (hasSelected())
-                getSelected().composite->AddTransformation(new TransTranslate({0.0f, 0.0f, -0.1f}));
             break;
         default:
             break;
@@ -144,10 +140,9 @@ void Engine::run()
 {
     lastTime = std::chrono::high_resolution_clock::now();
 
-
+    glClearColor(0.f, 0.f, 0.4f, 0.f);
     update(0.0);
     scene().Init();
-    glEnable(GL_DEPTH_TEST);
     //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     while (not glfwWindowShouldClose(window)) {
 
@@ -298,19 +293,31 @@ void Engine::initScene()
             //.emplaceLight(glm::vec3 { 1.f, 0.f, 0.f }, glm::vec3 { -10.f, 3.f, -5.f }, glm::vec3 { 0.f, 1.f, 0.f }, 30.f)
             //.emplaceLight(glm::vec3 { 1.f, 0.f, 0.f }, glm::vec3 { -10.f, 3.f, -5.f }, glm::vec3 { 1.f, 0.f, 0.f }, 30.f)
             //.emplaceLight(glm::vec3 { 1.f, 0.f, 0.f }, glm::vec3 { -10.f, 3.f, -5.f }, glm::vec3 { -1.f, 0.f, 0.f }, 30.f)
-            .emplaceLight(glm::vec3 { 1.f, 1.f, 1.f }, glm::vec3 { 10.f, 3.f, -5.f }, LightType::Point)
+            .emplaceLight(glm::vec3 { 0.f, -1.f, 0.f }, glm::vec3 { 0.f, -1.f, 0.f }, LightType::Directional)
             .addObject(
                     objBuilder
-                            .emplaceObject(ModelLoader::get("House/model"), ShaderManager::blinn(), TextureManager::getOrEmplace("grass", "resources/textures/grass.png"))
-                            .setPosition(0.f, 10.f, 0.f)
+                            .emplaceObject(ModelLoader::get("Plane/untitled"), ShaderManager::lambert(), TextureManager::getOrEmplace("grass", "resources/textures/grass.png"))
+                            .setPosition(0.f, 10.f, 0.f).setScale(0.005f, 0.005f, 0.005f)
+                            .setMovement(
+                                    std::make_shared<MovementCalculator>(
+                                            std::make_shared<BezierCurve>(
+                                                    glm::vec3 { 80.f, 20.f, 50.f },
+                                                    glm::vec3 { 20.f, 20.f, -50.f },
+                                                    glm::vec3 { -30.f, 20.f, 20.f },
+                                                    glm::vec3 { -80.f, 20.f, 10.f }
+                                            ),
+                                            glm::vec3 { 0.0, 0.0, 0.0 },
+                                            10.0
+                                    )
+                            )
                             .build()
             )
             .addObject(
-                    objBuilder
-                            .emplaceObject(ModelLoader::get("Terrain/teren"), ShaderManager::lambert(), TextureManager::getOrEmplace("grass", "resources/textures/grass.jpg"))
-                            .setPosition(0.f, 0.f, 0.f).setScale(6.f, 0.5f, 6.f)
-                            .build()
-            )
+                        objBuilder
+                        .emplaceObject(ModelLoader::get("Terrain/teren"), ShaderManager::lambert(), TextureManager::getOrEmplace("grass", "resources/textures/grass.png"))
+                        .setPosition(0.f, 0.f, 0.f).setScale(glm::vec3{2.f})
+                        .build()
+                    )
             .setCameraPosition(0.f, 6.f, 0.f)
             .build();
 
