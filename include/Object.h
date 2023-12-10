@@ -26,11 +26,11 @@ private:
     glm::vec3 color = defaultColor;
 
 
-    std::shared_ptr<TransTranslate> translateMat;
-    std::shared_ptr<TransScale> scaleMat;
-    std::shared_ptr<TransRotate> rotateMatX;
-    std::shared_ptr<TransRotate> rotateMatY;
-    std::shared_ptr<TransRotate> rotateMatZ;
+    std::shared_ptr<TransTranslate> translateMat = std::make_shared<TransTranslate>(glm::vec3 {0.f});
+    std::shared_ptr<TransScale> scaleMat = std::make_shared<TransScale>(glm::vec3 {1.f});
+    std::shared_ptr<TransRotate> rotateMatX = std::make_shared<TransRotate>(0, glm::vec3{1.f, 0.f, 0.f});
+    std::shared_ptr<TransRotate> rotateMatY = std::make_shared<TransRotate>(0, glm::vec3{0.f, 1.f, 0.f});
+    std::shared_ptr<TransRotate> rotateMatZ =  std::make_shared<TransRotate>(0, glm::vec3{0.f, 0.f, 1.f});
     [[nodiscard]] glm::mat4 transformation() const;
     std::reference_wrapper<Shader> shader;
     std::shared_ptr<Texture> texture;
@@ -82,7 +82,7 @@ public:
     void update(double dt);
     void AddTransformation(std::shared_ptr<TransComponent>  component);
     [[nodiscard]] unsigned int objectId() const;
-
+    void setMovement(std::shared_ptr<MovementCalculator> mc);
     std::shared_ptr<TransComposite> composite = std::make_shared<TransComposite>();
 
     void rotate(glm::vec3 radians);

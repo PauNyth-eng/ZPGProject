@@ -25,11 +25,6 @@ glm::mat4 Object::transformation() const
 {
     if (composite->tranformations.empty())
     {
-        translateMat = std::make_shared<TransTranslate>(translation);
-        scaleMat = std::make_shared<TransScale>(scales);
-        rotateMatX = std::make_shared<TransRotate>(rotation.x, glm::vec3{1.f, 0.f, 0.f});
-        rotateMatY = std::make_shared<TransRotate>(rotation.y, glm::vec3{0.f, 1.f, 0.f});
-        rotateMatZ = std::make_shared<TransRotate>(rotation.z, glm::vec3{0.f, 0.f, 1.f});
         composite->AddTransformation(translateMat);
         composite->AddTransformation(scaleMat);
         composite->AddTransformation(rotateMatX);
@@ -43,12 +38,6 @@ glm::mat4 Object::transformation() const
     rotateMatX->radians = rotation.z;
 
     return composite->Calculate(glm::mat4 { 1.f });
-    glm::mat4 t = glm::translate(glm::mat4 { 1.f }, translation);
-    t = glm::scale(t, scales);
-    t = glm::rotate(t, rotation.x, { 1.f, 0.f, 0.f });
-    t = glm::rotate(t, rotation.y, { 0.f, 1.f, 0.f });
-    t = glm::rotate(t, rotation.z, { 0.f, 0.f, 1.f });
-    return t;
 }
 
 float Object::getAcc(Direction dir) {
@@ -164,7 +153,7 @@ void Object::AddTransformation(std::shared_ptr<TransComponent> component)
 
 void Object::updateMovement(double dt) {
 
-    if (not movementCalculator && not *movementCalculator) {
+    if (not movementCalculator.has_value()) {
         return;
     }
 
@@ -179,6 +168,10 @@ Object::Object(std::shared_ptr<Model> model, Shader & shader, std::shared_ptr<Te
                std::shared_ptr<MovementCalculator> movementCalculator) :
         model(std::move(model)), shader(shader), texture(std::move(texture)), id(getNextId()),
         movementCalculator(movementCalculator) { }
+
+void Object::setMovement(std::shared_ptr<MovementCalculator> mc) {
+    movementCalculator.emplace(std::move(mc));
+}
 
 void Object::Builder::reset()
 {

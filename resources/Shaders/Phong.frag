@@ -42,7 +42,7 @@ vec3 calculateDirectionalLight(Light light, vec3 normal, vec3 viewDir, vec3 colo
 
     vec3 reflectionDir = reflect(-lightDir, normal);
     float specValue = pow(max(dot(viewDir, reflectionDir), 0.0), material.shininess);
-    vec3 spec = specValue * light.lightColor * material.specular;
+    vec3 spec = specValue * light.lightColor * 0.4;
 
     if (dot_product < 0.0) {
         spec = vec3(0.0);

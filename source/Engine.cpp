@@ -293,23 +293,25 @@ void Engine::initScene()
             //.emplaceLight(glm::vec3 { 1.f, 0.f, 0.f }, glm::vec3 { -10.f, 3.f, -5.f }, glm::vec3 { 0.f, 1.f, 0.f }, 30.f)
             //.emplaceLight(glm::vec3 { 1.f, 0.f, 0.f }, glm::vec3 { -10.f, 3.f, -5.f }, glm::vec3 { 1.f, 0.f, 0.f }, 30.f)
             //.emplaceLight(glm::vec3 { 1.f, 0.f, 0.f }, glm::vec3 { -10.f, 3.f, -5.f }, glm::vec3 { -1.f, 0.f, 0.f }, 30.f)
-            .emplaceLight(glm::vec3 { 0.f, -1.f, 0.f }, glm::vec3 { 0.f, -1.f, 0.f }, LightType::Directional)
+            .emplaceLight(glm::vec3 { 1.f }, glm::vec3 { 0.f, -1.f, 0.f }, LightType::Directional)
             .addObject(
                     objBuilder
-                            .emplaceObject(ModelLoader::get("Plane/untitled"), ShaderManager::lambert(), TextureManager::getOrEmplace("grass", "resources/textures/grass.png"))
-                            .setPosition(0.f, 10.f, 0.f).setScale(0.005f, 0.005f, 0.005f)
+                            .emplaceObject(ModelLoader::get("Plane/untitled"), ShaderManager::phong(), TextureManager::getOrEmplace("grass", "resources/textures/grass.png"))
+                            .setPosition(0.f, 10.f, 0.f).setScale(0.009f, 0.009f, 0.009f)
                             .setMovement(
                                     std::make_shared<MovementCalculator>(
-                                            std::make_shared<BezierCurve>(
-                                                    glm::vec3 { 80.f, 20.f, 50.f },
-                                                    glm::vec3 { 20.f, 20.f, -50.f },
-                                                    glm::vec3 { -30.f, 20.f, 20.f },
-                                                    glm::vec3 { -80.f, 20.f, 10.f }
+                                            std::make_shared<Circle>( glm::vec3{0.f, 10.f, 0.f} , 50.f
                                             ),
-                                            glm::vec3 { 0.0, 0.0, 0.0 },
-                                            10.0
+                                            glm::vec3 { 0.0, 0.f, 0.0 },
+                                            30
                                     )
                             )
+                            .build()
+            )
+            .addObject(
+                    objBuilder
+                            .emplaceObject(ModelLoader::get("Tree/tree"), ShaderManager::blinn(), TextureManager::getOrEmplace("grass", "resources/textures/grass.png"))
+                            .setPosition(0.f, 10.f, 0.f)
                             .build()
             )
             .addObject(
@@ -318,6 +320,12 @@ void Engine::initScene()
                         .setPosition(0.f, 0.f, 0.f).setScale(glm::vec3{2.f})
                         .build()
                     )
+            .addObject(
+                    objBuilder
+                            .emplaceObject(ModelLoader::get("House/model"), ShaderManager::lambert(), TextureManager::getOrEmplace("grass", "resources/textures/grass.png"))
+                            .setPosition(0.f, 0.f, 0.f)
+                            .build()
+            )
             .setCameraPosition(0.f, 6.f, 0.f)
             .build();
 
@@ -343,11 +351,13 @@ void Engine::update(float dt)
     glfwSwapBuffers(window);
 }
 
+
 void Engine::onButtonPress(const MouseData & mouseData) {
     if (mouseData.lbPressed()) {
         selectObject(mouseData.x, mouseData.y);
     } else if (mouseData.rbPressed()) {
-        emplaceObject(mouseData.x, mouseData.y);
+        //emplaceObject(mouseData.x, mouseData.y);
+        fillPicker(mouseData.x, mouseData.y);
     }
 }
 
@@ -377,4 +387,46 @@ void Engine::emplaceObject(const int mouseX, const int mouseY) {
                     .setPosition(pos.x, pos.y, pos.z).setScale(0.001f, 0.001f, 0.001f)
                     .build()
     );
+}
+
+void Engine::fillPicker(const int mouseX, const int mouseY) {
+    GLfloat depth;
+
+    const GLint x = mouseX;
+    const GLint y = bufferHeight - mouseY;
+
+    glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+
+    glm::vec3 screenX = glm::vec3 { x, y, depth };
+    glm::vec4 viewport { 0, 0, bufferWidth, bufferHeight };
+    auto pos = glm::unProject(screenX, scene().camera.view(), scene().camera.projection(), viewport);
+
+    if (scene().picker.empty())
+    {
+        scene().picker.push_back(pos);
+    }
+    else if (scene().picker.size() >= 1 && scene().picker.size() < 3)
+    {
+        scene().picker.push_back(pos);
+    }
+    else if (scene().picker.size() == 3)
+    {
+        scene().picker.push_back(pos);
+        getSelected().setMovement(
+                std::make_shared<MovementCalculator>(
+                        std::make_shared<BezierCurve>(
+                                scene().picker[0],
+                                scene().picker[1],
+                                scene().picker[2],
+                                scene().picker[3]
+                        ),
+                        glm::vec3 { 0.0, 0.f, 0.0 },
+                        10
+                )
+                );
+    }
+    else{
+        return;
+    }
+
 }

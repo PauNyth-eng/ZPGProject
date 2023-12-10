@@ -22,7 +22,7 @@ private:
 
 public:
     void setShaderCount() const;
-
+    std::vector<glm::vec3> picker;
     Scene() = delete;
 
     std::vector<Object> objects;

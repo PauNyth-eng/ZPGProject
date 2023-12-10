@@ -37,9 +37,9 @@ uniform sampler2D textureUnitID;
 vec3 calculateDirectionalLight(Light light, vec3 normal, vec3 worldPosition, vec3 color)
 {
     vec3 lightDir = normalize(-light.direction);
-    float dot_product = max(dot(normal, lightDir), 0.0);
+    float dot_product = max(dot(lightDir, normal), 0.0) ;
 
-    return dot_product * color;
+    return dot_product * color * light.lightColor;
 }
 
 vec3 calculatePointLight(Light light, vec3 normal, vec3 worldPosition, vec3 color)

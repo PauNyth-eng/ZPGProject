@@ -6,7 +6,6 @@
 
 #include <iostream>
 
-/* -------------------- Line -------------------- */
 
 static glm::vec3 calcDir(const glm::vec3 begin, const glm::vec3 end) {
 
@@ -38,7 +37,6 @@ glm::vec3 Line::direction(const float t) const {
     return dir;
 }
 
-/* -------------------- Circle -------------------- */
 
 float Circle::calcAngle(const float t) {
     constexpr float twopi = 2.f * M_PI;
@@ -60,7 +58,6 @@ glm::vec3 Circle::direction(const float t) const {
     return { 0.f, -angle-M_PI_2, 0.f };
 }
 
-/* -------------------- Bezier Curve -------------------- */
 
 static auto createCallback(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, glm::vec3 p4) {
 
@@ -84,7 +81,6 @@ glm::vec3 BezierCurve::direction(float t) const {
     return glm::vec3();
 }
 
-/* -------------------- Calculator -------------------- */
 
 MovementCalculator::MovementCalculator(std::shared_ptr<MovementCurve> curve, glm::vec3 rotationOffset, float duration) :
         curve(std::move(curve)), offset(rotationOffset), duration(duration) { }
