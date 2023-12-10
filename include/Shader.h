@@ -33,6 +33,8 @@ public:
     void passUniformLocation(const char* var, const glm::vec3& vector) const;
     void passUniformLocation(const std::string& var, int32_t value) const;
     void passUniformLocation(const char* var, int32_t value) const;
+    void passUniformLocation(const std::string& var, float value) const;
+    void passUniformLocation(const char* var, float value) const;
     void notify(EventType eventType, void* object) override;
 private:
     [[nodiscard]] bool checkShader() const;

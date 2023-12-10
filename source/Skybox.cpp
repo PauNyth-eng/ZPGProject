@@ -16,7 +16,6 @@ void Skybox::initVao() {
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
     using type = decltype(faces)::value_type;
     constexpr int typeSize = sizeof(type);

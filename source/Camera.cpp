@@ -100,8 +100,8 @@ glm::vec3 Camera::movementVector(float dt) const {
     const float forward = adjusted.x * dt * moveSpeed;
     const float upDown = adjusted.z * dt * moveSpeed;
 
-    const float dx = std::cos(fi) * forward + std::cos(fi + M_PI_2) * sideways;
-    const float dz = std::sin(fi) * forward + std::sin(fi + M_PI_2) * sideways;
+    const double dx = std::cos(fi) * forward + std::cos(fi + M_PI_2) * sideways;
+    const double dz = std::sin(fi) * forward + std::sin(fi + M_PI_2) * sideways;
 
     return { dx, dz, upDown };
 }
@@ -163,4 +163,8 @@ glm::mat4 Camera::projection() const
 glm::vec3 Camera::position() const
 {
     return eye;
+}
+
+void Camera::updateProjectionMatrix(int width, int height) {
+   projectMat = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 200.0f);
 }

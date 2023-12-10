@@ -16,7 +16,7 @@ void Mesh::Draw(unsigned int id, Shader& shader)
     shader.passUniformLocation("material.diffuse", glm::vec3(1));
     shader.passUniformLocation("material.specular", material.specular);
     shader.passUniformLocation("material.ambient", material.ambient);
-    shader.passUniformLocation("material.shininess", material.shininess);
+    shader.passUniformLocation("material.shininess", 32);
     glStencilFunc(GL_ALWAYS, id, 0xFF);
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);

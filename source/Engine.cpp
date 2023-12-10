@@ -10,23 +10,13 @@ void Engine::errorCallback(int error, const char * description) {
 }
 
 
-void Engine::windowFocusCallback(GLFWwindow *window, int focused)
-{
-    (void)window;
-    (void)focused;
-
-}
-
-void Engine::windowIconifyCallback(GLFWwindow *window, int iconified)
-{
-    (void)window;
-    (void)iconified;
-}
-
 void Engine::windowSizeCallback(GLFWwindow *window, int width, int height)
 {
     (void)window;
-    glViewport(0, 0, width, height);
+    bufferWidth = width;
+    bufferHeight = height;
+    scene().camera.updateProjectionMatrix(bufferWidth,bufferHeight);
+    glViewport(0, 0, bufferWidth, bufferHeight);
 }
 
 void Engine::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
@@ -111,18 +101,6 @@ void Engine::initCallbacks()
     };
     glfwSetKeyCallback(window, windowKey);
 
-
-    auto windowFocus = [](GLFWwindow* window, int focused) {
-        instance().windowFocusCallback(window, focused);
-    };
-    glfwSetWindowFocusCallback(window, windowFocus);
-
-    auto windowIconify = [](GLFWwindow* window, int iconified) {
-        instance().windowIconifyCallback(window, iconified);
-    };
-    glfwSetWindowIconifyCallback(window, windowIconify);
-
-
     auto windowSize = [](GLFWwindow* window, int width, int height) {
         instance().windowSizeCallback(window, width, height);
     };
@@ -134,13 +112,13 @@ void Engine::initCallbacks()
     glfwSetCursorPosCallback(window, cursor);
 
     auto mouseButton = [](GLFWwindow * win, int button, int action, int mode) {
-        Mouse::Button btn = Mouse::Button::Other;
+        Button btn = Button::Other;
         if (button == GLFW_MOUSE_BUTTON_1) {
-            btn = Mouse::Button::LEFT;
+            btn = Button::LEFT;
         } else if (button == GLFW_MOUSE_BUTTON_2) {
-            btn = Mouse::Button::RIGHT;
+            btn = Button::RIGHT;
         } else if (button == GLFW_MOUSE_BUTTON_3) {
-            btn = Mouse::Button::MIDDLE;
+            btn = Button::MIDDLE;
         }
         if (action == GLFW_PRESS) {
             instance().mouse.ButtonPress(btn);
@@ -287,7 +265,6 @@ void Engine::initGLEW()
 void Engine::initViewport()
 {
     glfwGetFramebufferSize(window, &bufferWidth, &bufferHeight);
-    bufferRatio = bufferWidth / (float)bufferHeight;
     glViewport(0, 0, bufferWidth, bufferHeight);
 }
 
@@ -317,17 +294,21 @@ void Engine::initScene()
 
     scenePtr = sceneBuilder
             .emplaceAmbientLight(glm::vec3{0.0001f})
-            //.emplaceLight(glm::vec3 { 1.f, 0.f, 0.f }, glm::vec3 { -10.f, 3.f, -5.f }, glm::vec3 { 0.f, -2.f, 0.f }, 12.5f)
+            //.emplaceLight(glm::vec3 { 1.f, 0.f, 0.f }, glm::vec3 { -10.f, 3.f, -5.f }, glm::vec3 { 0.f, -1.f, 0.f }, 30.f)
+            //.emplaceLight(glm::vec3 { 1.f, 0.f, 0.f }, glm::vec3 { -10.f, 3.f, -5.f }, glm::vec3 { 0.f, 1.f, 0.f }, 30.f)
+            //.emplaceLight(glm::vec3 { 1.f, 0.f, 0.f }, glm::vec3 { -10.f, 3.f, -5.f }, glm::vec3 { 1.f, 0.f, 0.f }, 30.f)
+            //.emplaceLight(glm::vec3 { 1.f, 0.f, 0.f }, glm::vec3 { -10.f, 3.f, -5.f }, glm::vec3 { -1.f, 0.f, 0.f }, 30.f)
+            .emplaceLight(glm::vec3 { 1.f, 1.f, 1.f }, glm::vec3 { 10.f, 3.f, -5.f }, LightType::Point)
             .addObject(
                     objBuilder
-                            .emplaceObject(ModelLoader::get("Plane/untitled"), ShaderManager::phong(), TextureManager::getOrEmplace("grass", "resources/textures/grass.png"))
-                            .setPosition(0.f, 10.f, 0.f).setScale(0.005f, 0.005f, 0.005f)
+                            .emplaceObject(ModelLoader::get("House/model"), ShaderManager::blinn(), TextureManager::getOrEmplace("grass", "resources/textures/grass.png"))
+                            .setPosition(0.f, 10.f, 0.f)
                             .build()
             )
             .addObject(
                     objBuilder
-                            .emplaceObject(ModelLoader::get("Terrain/teren"), ShaderManager::phong(), TextureManager::getOrEmplace("grass", "resources/textures/grass.jpg"))
-                            .setPosition(0.f, 0.f, 0.f).setScale(2.f, 0.5f, 2.f)
+                            .emplaceObject(ModelLoader::get("Terrain/teren"), ShaderManager::lambert(), TextureManager::getOrEmplace("grass", "resources/textures/grass.jpg"))
+                            .setPosition(0.f, 0.f, 0.f).setScale(6.f, 0.5f, 6.f)
                             .build()
             )
             .setCameraPosition(0.f, 6.f, 0.f)
@@ -386,7 +367,7 @@ void Engine::emplaceObject(const int mouseX, const int mouseY) {
             Object::Builder()
                     .emplaceObject(ModelLoader::get("Plane/untitled"), ShaderManager::phong(),
                                    TextureManager::get("grass"))
-                    .setPosition(pos.x, pos.y + 1.6f, pos.z).setScale(0.001f, 0.001f, 0.001f)
+                    .setPosition(pos.x, pos.y, pos.z).setScale(0.001f, 0.001f, 0.001f)
                     .build()
     );
 }

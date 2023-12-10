@@ -37,3 +37,12 @@ enum class Direction {
     left = -1,
     right = 1
 };
+
+
+enum class Button {
+    LEFT = 1,
+    RIGHT = 2,
+    MIDDLE = 4,
+    Other = 8
+};
+

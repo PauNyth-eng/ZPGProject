@@ -32,7 +32,6 @@ private:
 
     int bufferWidth = 0;
     int bufferHeight = 0;
-    float bufferRatio = 0.f;
 
     GLFWwindow* window = nullptr;
     typedef decltype(std::chrono::high_resolution_clock::now()) TimePoint;
@@ -68,8 +67,6 @@ private:
     void notify(EventType eventType, void* object) override;
     void errorCallback(int error, const char* description);
     void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-    void windowFocusCallback(GLFWwindow* window, int focused);
-    void windowIconifyCallback(GLFWwindow* window, int iconified);
     void windowSizeCallback(GLFWwindow* window, int width, int height);
 public:
     Engine();

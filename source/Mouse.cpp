@@ -8,17 +8,17 @@ Mouse * Mouse::mouse = nullptr;
 
 bool MouseData::lbPressed() const
 {
-    return button & static_cast<uint8_t>(Mouse::Button::LEFT);
+    return button & static_cast<uint8_t>(Button::LEFT);
 }
 
 bool MouseData::rbPressed() const
 {
-    return button & static_cast<uint8_t>(Mouse::Button::RIGHT);
+    return button & static_cast<uint8_t>(Button::RIGHT);
 }
 
 bool MouseData::mbPressed() const
 {
-    return button & static_cast<uint8_t>(Mouse::Button::MIDDLE);
+    return button & static_cast<uint8_t>(Button::MIDDLE);
 }
 
 MouseData::MouseData() : x(0), y(0), dx(0), dy(0), button(0)
@@ -29,7 +29,7 @@ MouseData::MouseData(int x, int y, int dx, int dy, uint8_t button) : x(x), y(y),
 {
 }
 
-void Mouse::ButtonPress(Mouse::Button button) {
+void Mouse::ButtonPress(Button button) {
     pressed |= static_cast<uint8_t>(button);
 
     mouseData = MouseData(x, y, 0, 0, pressed);

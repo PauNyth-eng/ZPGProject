@@ -8,7 +8,6 @@ struct Light
     vec3 direction;
     float cutoff;
     vec3 lightColor;
-    float outerCutoff;
     int lightType;
 };
 
@@ -75,29 +74,33 @@ vec3 calculatePointLight(Light light, vec3 normal, vec3 viewDir, vec3 color)
 
 vec3 calculateSpotLight(Light light, vec3 normal, vec3 viewDir, vec3 color)
 {
-    vec3 worldPosition = vec3(ex_worldPosition);
+    vec3 worldPosition = ex_worldPosition.xyz/ex_worldPosition.w;
     vec3 lightDir = normalize(light.position - worldPosition);
     float dist = length(light.position - worldPosition);
     float attenuation = clamp(5.0 / dist, 0.0, 1.0);
 
-    float theta = dot(lightDir, normalize(-light.direction));
-    float intensity = smoothstep(light.outerCutoff, light.cutoff, theta);
-    if (theta <= light.cutoff) {
-        return vec3(0.0);
+    if (dot(-lightDir, normalize(light.direction)) > light.cutoff)
+    {
+        float dot_product = dot(lightDir, normal);
+        vec3 diffuse = max(dot_product, 0.0) * attenuation * material.diffuse;
+
+        vec3 reflectionDir = reflect(-lightDir, normal);
+        float specValue = pow(max(dot(viewDir, reflectionDir), 0.0), material.shininess);
+        vec3 spec = specValue * light.lightColor * material.specular ;
+
+        if (dot_product < 0.0) {
+            spec = vec3(0.0);
+        }
+
+        float theta = dot(lightDir, normalize(-light.direction));
+        float epsilon = light.cutoff;
+        float intensity = clamp((theta - epsilon) / (1 - epsilon), 0, 1);
+        return (diffuse + spec) * color * intensity;
     }
 
-    float dot_product = dot(lightDir, normal);
-    vec3 diffuse = max(dot_product, 0.0) * attenuation * material.diffuse * intensity;
+    return vec3(0.0);
 
-    vec3 reflectionDir = reflect(-lightDir, normal);
-    float specValue = pow(max(dot(viewDir, reflectionDir), 0.0), material.shininess);
-    vec3 spec = specValue * light.lightColor * material.specular * intensity;
 
-    if (dot_product < 0.0) {
-        spec = vec3(0.0);
-    }
-
-    return (diffuse + spec) * color;
 }
 
 
@@ -111,10 +114,6 @@ void main ()
     vec3 color = vec3(tex.x, tex.y, tex.z);
     for (int i = 0; i < lightCount; i++)
     {
-        vec3 lightColor = lights[i].lightColor;
-        vec3 lightPosition = lights[i].position;
-        vec3 lightDirection = lights[i].direction;
-        float cutoff = lights[i].cutoff;
 
         if (lights[i].lightType == 0)
         {

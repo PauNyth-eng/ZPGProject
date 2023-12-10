@@ -35,14 +35,12 @@ struct Material {
 
 class Mesh {
 public:
-    // mesh data
     void Draw(unsigned  int id, Shader& shader);
 
 
     Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, std::shared_ptr<Texture> texture, const Material& material);
     void applyTexture(std::shared_ptr<Texture> texture);
 private:
-    //  render data
     unsigned int VAO{}, VBO{}, EBO{};
     std::vector<Vertex>       vertices;
     std::vector<unsigned int> indices;

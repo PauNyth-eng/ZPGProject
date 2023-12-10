@@ -42,7 +42,7 @@ void Object::setColor(float r, float g, float b) {
 
 void Object::draw() const {
     shader.get().use();
-    //shader.get().passUniformLocation("objectColor", color);
+    shader.get().passUniformLocation("objectColor", color);
     shader.get().passUniformLocation("modelMatrix", transformation());
     model->draw(id, shader.get());
 }
@@ -67,26 +67,6 @@ void Object::updateScale(float d) {
 
 void Object::updateRotate(float d) {
 
-    if (rotationRadians.x == 0 && rotationRadians.y == 0 && rotationRadians.z == 0) {
-        return;
-    }
-
-    float acc = 1.f * (int)rotateDr * d;
-
-    // Calculate the position relative to the rotation center (rotationCenter is set to (0,0,0))
-    glm::vec3 relativePosition = position - rotationCenter;
-
-    // Calculate the rotation matrix based on the rotation axis (e.g., glm::vec3(0, 1, 0))
-    glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(acc), direction);
-
-    // Update the relative position by applying the rotation matrix
-    relativePosition = glm::vec3(rotationMatrix * glm::vec4(relativePosition, 1.0f));
-
-    // Update the object's position by adding the rotation center back to the relative position (rotationCenter is set to (0,0,0))
-    position = relativePosition + rotationCenter;
-
-    // Update the object's transformation
-    setRotate(glm::vec3{acc}, direction, rotationCenter);
 }
 
 void Object::updateMove(float d) {
@@ -158,7 +138,7 @@ Object::Builder& Object::Builder::setShader(Shader& shader)
     return *this;
 }
 
-Object::Builder& Object::Builder::emplaceObject(std::shared_ptr<Model> model, Shader& shader, std::shared_ptr<Texture> texture)
+Object::Builder& Object::Builder::emplaceObject(std::shared_ptr<Model> model, Shader& shader, std::shared_ptr<Texture> texture )
 {
     return setModel(std::move(model)).setTexture(std::move(texture)).setShader(shader);
 }

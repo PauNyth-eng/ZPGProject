@@ -4,7 +4,6 @@
 #pragma once
 #include <functional>
 #include <vector>
-#define _USE_MATH_DEFINES
 #include <math.h>
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -15,7 +14,7 @@ class Camera :
         public Observer, public Observable
 {
 private:
-    glm::mat4 projectMat = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 200.0f);
+    glm::mat4 projectMat = glm::perspective(glm::radians(45.0f), 800.f / 600.f, 0.1f, 6000.0f);
 
     glm::vec3 eye{ 0.f, 1.f, 3.f };
     glm::vec3 target{ 0., 5., 0. };
@@ -42,7 +41,7 @@ private:
 
 public:
     Camera();
-
+    void updateProjectionMatrix(int width, int height);
     void setPosition(glm::vec3 pos);
     void move(glm::vec3 delta);
     glm::vec3 getTarget() const;
@@ -66,4 +65,3 @@ public:
 };
 
 
-#

@@ -43,13 +43,6 @@ class Mouse : public Observable{
 
 public:
 
-    enum class Button {
-        LEFT = 1,
-        RIGHT = 2,
-        MIDDLE = 4,
-        Other = 8
-    };
-
     void ButtonPress(Button button);
 
     void ButtonRelease(Button button);

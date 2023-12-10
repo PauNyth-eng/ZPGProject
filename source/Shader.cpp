@@ -68,6 +68,7 @@ void Shader::passUniformLocation(const std::string& var, int32_t value) const
     passUniformLocation(var.c_str(), value);
 }
 
+
 void Shader::passUniformLocation(const char* var, int32_t value) const
 {
     const auto location = getUniformLocation(var);
@@ -75,6 +76,22 @@ void Shader::passUniformLocation(const char* var, int32_t value) const
         glProgramUniform1i(shaderId, location, value);
     }
 }
+
+void Shader::passUniformLocation(const std::string& var, float value) const
+{
+    passUniformLocation(var.c_str(), value);
+}
+
+
+void Shader::passUniformLocation(const char* var, float value) const
+{
+    const auto location = getUniformLocation(var);
+    if (location >= 0) {
+        glProgramUniform1f(shaderId, location, value);
+    }
+}
+
+
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     compile(loadShader(vertexPath), loadShader(fragmentPath));
@@ -207,7 +224,7 @@ void Shader::notify(EventType eventType, void* object)
 void Shader::colorChanged(glm::vec3 color, size_t lightIndex, LightType lightType) const {
     if (lightType == LightType::Ambient) {
         passUniformLocation("ambientColor", color);
-    } else if (lightType == LightType::Point or lightType == LightType::Directional) {
+    } else if (lightType == LightType::Point or lightType == LightType::Directional or lightType == LightType::Spot){
         passUniformLocation("lights[" + std::to_string(lightIndex) + "].lightColor", color);
     }
 }
@@ -246,6 +263,5 @@ void Shader::applyLight(SpotLight & light) {
     passUniformLocation("lights[" + std::to_string(light.index) + "].position", light.GetPosition());
     passUniformLocation("lights[" + std::to_string(light.index) + "].direction", light.GetDirection());
     passUniformLocation("lights[" + std::to_string(light.index) + "].cutoff", glm::cos(glm::radians(light.GetCutOff())));
-    passUniformLocation("lights[" + std::to_string(light.index) + "].outerCutoff", glm::cos(glm::radians(25.f)));
 }
 

@@ -7,9 +7,9 @@
 
 void Scene::setShaderCount() const
 {
-    ShaderManager::lambert().passUniformLocation("lightCount", lights.size());
-    ShaderManager::blinn().passUniformLocation("lightCount", lights.size());
-    ShaderManager::phong().passUniformLocation("lightCount", lights.size());
+    ShaderManager::lambert().passUniformLocation("lightCount", int32_t (lights.size()));
+    ShaderManager::blinn().passUniformLocation("lightCount", int32_t (lights.size()));
+    ShaderManager::phong().passUniformLocation("lightCount", int32_t (lights.size()));
 }
 
 void Scene::Init()
@@ -18,15 +18,18 @@ void Scene::Init()
     camera.apply();
 }
 
+
 void Scene::Update(double timeDelta)
 {
 
     camera.update(timeDelta);
     flashlight->SetPosition(camera.position());
     flashlight->SetDirection(camera.getTarget());
-//    printf("Camera position: %f %f %f\n", camera.position().x, camera.position().y, camera.position().z);
-//    printf("Camera target: %f %f %f\n", camera.getTarget().x, camera.getTarget().y, camera.getTarget().z);
-//    printf("Flashlight Direction: %f %f %f\n", flashlight->GetDirection().x, flashlight->GetDirection().y, flashlight->GetDirection().z);
+    //flashlight->apply();
+ //   printf("Flashlight Direction: %f %f %f\n", flashlight->GetDirection().x, flashlight->GetDirection().y, flashlight->GetDirection().z);
+//    printf("Flashlight Position: %f %f %f\n", flashlight->GetPosition().x, flashlight->GetPosition().y, flashlight->GetPosition().z);
+//    printf("Flashlight Color: %f %f %f\n", flashlight->GetColor().x, flashlight->GetColor().y, flashlight->GetColor().z);
+//    printf("Flashlight Cutoff: %f\n", flashlight->GetCutOff());
     skybox->draw();
     for (auto& obj : objects)
     {
@@ -219,7 +222,7 @@ Scene* Scene::Builder::build()
     scene->camera.registerObserver(ShaderManager::skybox());
     Mouse::instance().registerObserver(scene->camera);
 
-    scene->flashlight = std::make_shared<SpotLight>(glm::vec3(1.f), cameraPos, scene->camera.getTarget(), 20.f);
+    scene->flashlight = std::make_shared<SpotLight>(glm::vec3(1.f), cameraPos, glm::vec3(0,-1,0), 12.f);
     scene->flashlight->registerObserver(ShaderManager::constant());
     scene->flashlight->registerObserver(ShaderManager::lambert());
     scene->flashlight->registerObserver(ShaderManager::phong());
